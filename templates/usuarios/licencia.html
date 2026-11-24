@@ -1,0 +1,101 @@
+{% extends 'base/dashboard_base.html' %}
+{% load static %}
+
+{% block panel_content %}
+<div class="page-header-dashboard">
+    <h1>🪪 Mi Licencia</h1>
+    <p>Consulta el estatus de tu licencia y descarga tu documento</p>
+</div>
+
+<!-- Estado actual -->
+<div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 2rem; text-align: center;">
+    <div style="display: inline-block; background: #fef3c7; padding: 0.5rem 2rem; border-radius: 50px;">
+        <span style="font-weight: 700; color: #d97706;">⏳ En proceso</span>
+    </div>
+    <p style="color: #6b7280; margin-top: 1rem;">Tu solicitud está siendo revisada. Completa los pasos faltantes para obtener tu licencia.</p>
+    <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; flex-wrap: wrap;">
+        <div>
+            <p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Capacitaciones</p>
+            <p style="font-weight: 700; font-size: 1.2rem;">25%</p>
+        </div>
+        <div>
+            <p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Documentos</p>
+            <p style="font-weight: 700; font-size: 1.2rem;">14%</p>
+        </div>
+        <div>
+            <p style="font-size: 0.8rem; color: #6b7280; margin: 0;">Pago</p>
+            <p style="font-weight: 700; font-size: 1.2rem;">Pendiente</p>
+        </div>
+    </div>
+</div>
+
+<!-- Vista previa de la licencia -->
+<div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 2px solid #D4A555;">
+    <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.png' %}" alt="REDAIT" style="height: 40px; width: auto;">
+                <span style="font-weight: 800; color: #991547; font-size: 1.2rem;">REDAIT</span>
+            </div>
+            <p style="color: #6b7280; font-size: 0.8rem; margin-top: 0.3rem;">Secretaría de Turismo y Desarrollo Económico</p>
+        </div>
+        <div style="text-align: right;">
+            <span style="background: #991547; color: white; padding: 0.2rem 1rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700;">PENDIENTE</span>
+            <p style="color: #6b7280; font-size: 0.7rem; margin-top: 0.3rem;">Folio: REDAIT-2026-0001</p>
+        </div>
+    </div>
+
+    <div style="border-top: 1px solid #f1f5f9; margin: 1rem 0; padding-top: 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+            <div>
+                <p style="color: #6b7280; font-size: 0.7rem;">NOMBRE</p>
+                <p style="font-weight: 600;">{{ user.first_name|default:'Usuario' }} {{ user.last_name|default:'Ejemplo' }}</p>
+            </div>
+            <div>
+                <p style="color: #6b7280; font-size: 0.7rem;">TIPO</p>
+                <p style="font-weight: 600;">Persona Física</p>
+            </div>
+            <div>
+                <p style="color: #6b7280; font-size: 0.7rem;">NÚMERO DE LICENCIA</p>
+                <p style="font-weight: 600;">LIC-2026-0001</p>
+            </div>
+            <div>
+                <p style="color: #6b7280; font-size: 0.7rem;">VIGENCIA</p>
+                <p style="font-weight: 600;">12 meses</p>
+            </div>
+            <div>
+                <p style="color: #6b7280; font-size: 0.7rem;">FECHA DE EXPEDICIÓN</p>
+                <p style="font-weight: 600;">Pendiente</p>
+            </div>
+            <div>
+                <p style="color: #6b7280; font-size: 0.7rem;">FECHA DE VENCIMIENTO</p>
+                <p style="font-weight: 600;">Pendiente</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="border-top: 1px solid #f1f5f9; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <div style="display: flex; gap: 1rem;">
+            <a href="#" style="background: #991547; color: white; padding: 0.6rem 1.5rem; border-radius: 12px; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
+                <i class="fas fa-file-pdf"></i> Descargar PDF
+            </a>
+        </div>
+        <div style="text-align: center;">
+            <div style="background: #f1f5f9; padding: 0.5rem; border-radius: 8px; display: inline-block;">
+                <i class="fas fa-qrcode" style="font-size: 2rem; color: #991547;"></i>
+                <p style="color: #6b7280; font-size: 0.6rem; margin-top: 0.2rem;">Código de validación</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="margin-top: 1.5rem; background: #f8fafc; border-radius: 16px; padding: 1.5rem; border: 1px solid #f1f5f9;">
+    <h4 style="font-weight: 700; font-size: 1rem;">📌 ¿Qué sigue?</h4>
+    <ul style="color: #4a5568; font-size: 0.95rem; padding-left: 1.2rem; margin-top: 0.5rem;">
+        <li>Completa tus cursos de capacitación (1 de 4)</li>
+        <li>Sube los documentos faltantes (6 de 7)</li>
+        <li>Realiza el pago de $679.00 MXN</li>
+        <li>Una vez completado, tu licencia será emitida en 24 horas</li>
+    </ul>
+</div>
+{% endblock %}

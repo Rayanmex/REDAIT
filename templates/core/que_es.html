@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}¿Qué es REDAIT?{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 4rem 1.5rem;">
+    <h1 style="font-size: 2.5rem; font-weight: 800; color: #991547; margin-bottom: 2rem;">¿Qué es REDAIT?</h1>
+    <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+        <p style="font-size: 1.1rem; color: #6b7280; margin-bottom: 1.5rem;">
+            El <strong>Registro Estatal de Desarrollo y Atención Integral al Turista (REDAIT)</strong> es el sistema mediante el cual la Secretaría de Turismo del Estado de Tabasco otorga las licencias a guías de turistas que operan en la entidad.
+        </p>
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: #1f2937; margin-top: 2rem;">¿Para qué sirve?</h2>
+        <p style="color: #6b7280;">Permite a los guías de turistas ejercer su actividad profesional de manera legal, acreditando su capacitación y conocimientos.</p>
+        <a href="{% url 'core:inicio' %}" class="btn-primary" style="display: inline-block; background: #991547; color: white; padding: 0.8rem 2.5rem; border-radius: 50px; font-weight: 600; text-decoration: none; margin-top: 2rem;">Volver al inicio</a>
+    </div>
+</div>
+{% endblock %}

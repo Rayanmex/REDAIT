@@ -1,0 +1,130 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+  {% if estado == 'valido' %}Licencia {{ folio_licencia }} · REDAIT{% else %}Verificación · REDAIT{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/solicitud.css' %}">
+<style>
+  .verif-wrapper {
+      max-width: 720px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+  }
+  .verif-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 60px rgba(153,21,71,0.12);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+  }
+  .verif-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: var(--gradiente-primario);
+  }
+  .verif-card.ok { border: 2px solid #22c55e; }
+  .verif-card.error { border: 2px solid #991b1b; }
+  .verif-icon {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 3rem; color: var(--white);
+  }
+  .verif-icon.ok { background: linear-gradient(135deg, #22c55e 0%, #166534 100%); }
+  .verif-icon.error { background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); }
+  .verif-card h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem; }
+  .verif-card.ok h2 { color: #166534; }
+  .verif-card.error h2 { color: #991b1b; }
+  .verif-dl {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 0.7rem 1rem;
+      margin: 2rem 0;
+      text-align: left;
+      background: #fafbfc;
+      padding: 1.5rem;
+      border-radius: 12px;
+  }
+  .verif-dl dt { font-weight: 600; font-size: 0.88rem; color: var(--text-gray); }
+  .verif-dl dd { font-size: 0.95rem; color: var(--text-dark); margin: 0; }
+  @media (max-width: 640px) {
+      .verif-dl { grid-template-columns: 1fr; gap: 0.2rem; }
+      .verif-dl dt { margin-top: 0.6rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="verif-wrapper">
+
+  {% if estado == 'valido' %}
+    <div class="verif-card ok">
+      <div class="verif-icon ok">✓</div>
+      <h2>Licencia válida</h2>
+      <p style="color: var(--text-gray); font-size: 0.95rem;">
+        Este documento acredita a la persona como Agente Inmobiliario debidamente registrado
+        ante la Secretaría de Turismo del Estado de Tabasco.
+      </p>
+
+      <dl class="verif-dl">
+        <dt>Folio de licencia</dt>
+        <dd><strong style="color: #166534; font-size: 1.15rem;">{{ folio_licencia }}</strong></dd>
+
+        <dt>Nombre</dt>
+        <dd><strong>{{ nombre_mostrar }}</strong></dd>
+
+        <dt>Tipo de trámite</dt>
+        <dd>{{ tipo_tramite }}</dd>
+
+        <dt>Fecha de emisión</dt>
+        <dd>{{ fecha_emision|date:"d/m/Y" }}</dd>
+
+        <dt>Vigente hasta</dt>
+        <dd><strong style="color: #166534;">{{ fecha_vigencia|date:"d/m/Y" }}</strong></dd>
+      </dl>
+
+      <p style="font-size: 0.8rem; color: var(--text-gray); margin-top: 1rem;">
+        Verificación realizada el {% now "d/m/Y H:i" %}
+      </p>
+    </div>
+
+  {% elif estado == 'no_emitida' %}
+    <div class="verif-card error">
+      <div class="verif-icon error">!</div>
+      <h2>Licencia no emitida</h2>
+      <p style="color: var(--text-gray);">
+        Existe una solicitud con folio <strong>{{ solicitud.folio }}</strong>,
+        pero la licencia aún no ha sido emitida.
+      </p>
+    </div>
+
+  {% else %}
+    <div class="verif-card error">
+      <div class="verif-icon error">✗</div>
+      <h2>Licencia no encontrada</h2>
+      <p style="color: var(--text-gray);">
+        No encontramos ninguna licencia con el folio
+        <strong>{{ folio_buscado }}</strong>.
+      </p>
+      <p style="font-size: 0.85rem; color: var(--text-gray); margin-top: 1rem;">
+        Si crees que es un error, contáctanos al (993) 310-9750.
+      </p>
+    </div>
+  {% endif %}
+
+  <div style="text-align: center; margin-top: 2rem;">
+    <a href="{% url 'core:inicio' %}" class="btn-redait-outline">
+      <i class="fas fa-arrow-left"></i> Volver al inicio
+    </a>
+  </div>
+
+</div>
+{% endblock %}

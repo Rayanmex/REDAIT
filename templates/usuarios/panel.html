@@ -1,0 +1,401 @@
+{% extends 'base/dashboard_base.html' %}
+{% load static %}
+
+{% block panel_content %}
+<div class="page-header-dashboard">
+    <h1>¡Bienvenido, {{ user.first_name|default:user.username }}!</h1>
+    <p>Completa los 4 pasos para obtener tu licencia de operaciones inmobiliarias</p>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 12px;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+{# ============================================================ #}
+{# ESTADO DE LA LICENCIA (vencida / vigente) #}
+{# ============================================================ #}
+{% if licencia_vencida %}
+<div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h3 style="margin: 0 0 0.5rem; color: #92400e; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-exclamation-triangle"></i>
+        Tu licencia ha vencido
+    </h3>
+    <p style="margin: 0 0 1rem; color: #78350f;">
+        Tu licencia <strong>{{ solicitud.ciudadano.folio_licencia }}</strong>
+        venció el
+        <strong>
+            {% with ultima=solicitud.ciudadano.ultima_solicitud_emitida %}
+                {% if ultima and ultima.fecha_vigencia_padron %}
+                    {{ ultima.fecha_vigencia_padron|date:"d/m/Y" }}
+                {% else %}
+                    —
+                {% endif %}
+            {% endwith %}
+        </strong>.
+        Puedes iniciar tu <strong>revalidación</strong> ahora mismo.
+    </p>
+    <p style="margin: 0 0 1rem; color: #78350f; font-size: 0.9rem;">
+        Al enviar una nueva solicitud, conservarás tu folio
+        <strong>{{ solicitud.ciudadano.folio_licencia }}</strong> y actualizarás tus datos.
+    </p>
+    <a href="{% url 'usuarios:paso1_datos' %}"
+       style="display: inline-block; background: #f59e0b; color: #fff; padding: 0.7rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: 700;">
+        <i class="fas fa-redo"></i> Iniciar mi revalidación
+    </a>
+</div>
+{% endif %}
+
+{% if licencia_vigente %}
+<div style="background: #f0fdf4; border: 2px solid #86efac; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h3 style="margin: 0 0 0.5rem; color: #166534; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-check-circle"></i>
+        Tu licencia está vigente
+    </h3>
+    <p style="margin: 0; color: #166534;">
+        Folio <strong>{{ solicitud.ciudadano.folio_licencia }}</strong>
+        {% with ultima=solicitud.ciudadano.ultima_solicitud_emitida %}
+            {% if ultima and ultima.fecha_vigencia_padron %}
+                · Vence el <strong>{{ ultima.fecha_vigencia_padron|date:"d/m/Y" }}</strong>.
+            {% endif %}
+        {% endwith %}
+    </p>
+</div>
+{% endif %}
+
+{# ============================================================ #}
+{# ESTADO: requiere_accion · corregir_documentos #}
+{# ============================================================ #}
+{% if solicitud.requiere_corregir_documentos %}
+<div style="background: #fff7ed; border: 2px solid #f59e0b; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h3 style="margin: 0 0 0.5rem; color: #b45309; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-exclamation-triangle"></i>
+        Tu solicitud requiere correcciones
+    </h3>
+    <p style="margin: 0 0 0.8rem; color: #78350f;">El revisor indicó lo siguiente:</p>
+    <blockquote style="background: #fff; border-left: 4px solid #f59e0b; padding: 12px 16px; margin: 0 0 1rem; border-radius: 6px; color: #1f2937;">
+        {{ solicitud.comentario_admin }}
+    </blockquote>
+    <p style="margin: 0 0 1rem; color: #78350f; font-size: 0.9rem;">
+        Puedes volver a cualquier paso para corregir lo que se te indicó.
+    </p>
+    <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+        <a href="{% url 'usuarios:paso1_datos' %}"
+           style="display: inline-block; background: #f59e0b; color: #fff; padding: 0.7rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: 700;">
+            <i class="fas fa-user-edit"></i> Corregir mis datos
+        </a>
+        <a href="{% url 'usuarios:resumen_solicitud' %}"
+           style="display: inline-block; background: transparent; color: #f59e0b; padding: 0.7rem 1.5rem; border-radius: 50px; border: 2px solid #f59e0b; text-decoration: none; font-weight: 700;">
+            Ver resumen y reenviar
+        </a>
+    </div>
+</div>
+{% endif %}
+
+{# ============================================================ #}
+{# ESTADO: aprobada · sin_comprobante (pendiente de pago) #}
+{# ============================================================ #}
+{% if solicitud.estado == 'aprobada' and solicitud.pago_estado == 'sin_comprobante' %}
+<div style="background: #f0fdf4; border: 2px solid #86efac; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h3 style="margin: 0 0 0.5rem; color: #166534; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-check-circle"></i>
+        ¡Tu solicitud fue aprobada!
+    </h3>
+    <p style="margin: 0 0 1rem; color: #166534;">
+        Descarga tu pase de pago y sube tu comprobante para continuar con el trámite.
+    </p>
+
+    <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+        <a href="{% url 'usuarios:descargar_pase_caja' %}"
+           style="display: inline-block; background: #166534; color: #fff; padding: 0.7rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: 700;">
+            <i class="fas fa-file-pdf"></i> Descargar pase de pago
+        </a>
+
+        <button type="button" id="btnMostrarSubida"
+                style="display: inline-block; background: #991547; color: #fff; padding: 0.7rem 1.5rem; border-radius: 50px; border: none; text-decoration: none; font-weight: 700; cursor: pointer;">
+            <i class="fas fa-upload"></i> Subir comprobante
+        </button>
+    </div>
+
+    {# PANEL DE SUBIDA (oculto por defecto) #}
+    <div id="panelSubida" style="display: none; margin-top: 1.5rem; background: white; border: 2px dashed #991547; border-radius: 12px; padding: 1.5rem;">
+        <h4 style="margin: 0 0 1rem; color: #991547; font-size: 1rem;">
+            <i class="fas fa-paperclip"></i> Sube tu comprobante de pago
+        </h4>
+
+        <form method="post" enctype="multipart/form-data"
+              action="{% url 'usuarios:subir_comprobante_pago' %}">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                    Comprobante <span style="color: #991547;">*</span>
+                </label>
+                <input type="file" name="comprobante_pago"
+                       accept=".pdf,.jpg,.jpeg,.png" required
+                       style="width: 100%; padding: 0.8rem; border: 2px dashed #d1d5db; border-radius: 10px; background: #fafbfc;">
+                <p style="font-size: 0.8rem; color: #6b7280; margin: 0.4rem 0 0;">
+                    PDF, JPG o PNG. Máximo 5 MB.
+                </p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                    Referencia o folio bancario
+                </label>
+                <input type="text" name="referencia_pago" maxlength="100"
+                       placeholder="Ej. 1234567890"
+                       style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 10px;">
+            </div>
+
+            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                <button type="submit"
+                        style="background: #991547; color: #fff; padding: 0.7rem 1.5rem; border-radius: 50px; border: none; font-weight: 700; cursor: pointer;">
+                    <i class="fas fa-paper-plane"></i> Enviar comprobante
+                </button>
+                <button type="button" id="btnCancelarSubida"
+                        style="background: transparent; color: #991547; padding: 0.7rem 1.5rem; border-radius: 50px; border: 2px solid #991547; font-weight: 700; cursor: pointer;">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const btn = document.getElementById('btnMostrarSubida');
+        const panel = document.getElementById('panelSubida');
+        const btnCancelar = document.getElementById('btnCancelarSubida');
+        if (btn && panel) {
+            btn.addEventListener('click', function() {
+                panel.style.display = 'block';
+                btn.style.display = 'none';
+                panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+        }
+        if (btnCancelar && panel) {
+            btnCancelar.addEventListener('click', function() {
+                panel.style.display = 'none';
+                btn.style.display = 'inline-block';
+            });
+        }
+    })();
+</script>
+{% endif %}
+
+{# ============================================================ #}
+{# ESTADO: aprobada · comprobante_cargado (en revisión) #}
+{# ============================================================ #}
+{% if solicitud.estado == 'aprobada' and solicitud.pago_estado == 'comprobante_cargado' %}
+<div style="background: #eff6ff; border: 2px solid #93c5fd; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h3 style="margin: 0 0 0.5rem; color: #1e40af; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-clock"></i>
+        Comprobante en revisión
+    </h3>
+    <p style="margin: 0; color: #1e40af;">
+        Recibimos tu comprobante de pago. Un validador revisará tu pago en breve.
+        Te notificaremos por correo cuando haya novedades.
+    </p>
+</div>
+{% endif %}
+
+{# ============================================================ #}
+{# ESTADO: requiere_accion · resubir_comprobante #}
+{# ============================================================ #}
+{% if solicitud.requiere_resubir_comprobante %}
+<div style="background: #fef2f2; border: 2px solid #fca5a5; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h3 style="margin: 0 0 0.5rem; color: #991b1b; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-times-circle"></i>
+        Tu comprobante fue rechazado
+    </h3>
+    {% if solicitud.comentario_comprobante %}
+        <p style="margin: 0 0 0.8rem; color: #991b1b;">
+            <strong>Motivo:</strong> {{ solicitud.comentario_comprobante }}
+        </p>
+    {% endif %}
+
+    <button type="button" id="btnMostrarSubida2"
+            style="display: inline-block; background: #991b1b; color: #fff; padding: 0.7rem 1.5rem; border-radius: 50px; border: none; font-weight: 700; cursor: pointer;">
+        <i class="fas fa-redo"></i> Volver a subir comprobante
+    </button>
+
+    {# PANEL DE SUBIDA (oculto por defecto) #}
+    <div id="panelSubida2" style="display: none; margin-top: 1.5rem; background: white; border: 2px dashed #991b1b; border-radius: 12px; padding: 1.5rem;">
+        <h4 style="margin: 0 0 1rem; color: #991b1b; font-size: 1rem;">
+            <i class="fas fa-paperclip"></i> Sube tu nuevo comprobante
+        </h4>
+
+        <form method="post" enctype="multipart/form-data"
+              action="{% url 'usuarios:subir_comprobante_pago' %}">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                    Comprobante <span style="color: #991547;">*</span>
+                </label>
+                <input type="file" name="comprobante_pago"
+                       accept=".pdf,.jpg,.jpeg,.png" required
+                       style="width: 100%; padding: 0.8rem; border: 2px dashed #d1d5db; border-radius: 10px; background: #fafbfc;">
+                <p style="font-size: 0.8rem; color: #6b7280; margin: 0.4rem 0 0;">
+                    PDF, JPG o PNG. Máximo 5 MB.
+                </p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                    Referencia o folio bancario
+                </label>
+                <input type="text" name="referencia_pago" maxlength="100"
+                       placeholder="Ej. 1234567890"
+                       style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 10px;">
+            </div>
+
+            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                <button type="submit"
+                        style="background: #991b1b; color: #fff; padding: 0.7rem 1.5rem; border-radius: 50px; border: none; font-weight: 700; cursor: pointer;">
+                    <i class="fas fa-paper-plane"></i> Enviar comprobante
+                </button>
+                <button type="button" id="btnCancelarSubida2"
+                        style="background: transparent; color: #991b1b; padding: 0.7rem 1.5rem; border-radius: 50px; border: 2px solid #991b1b; font-weight: 700; cursor: pointer;">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const btn = document.getElementById('btnMostrarSubida2');
+        const panel = document.getElementById('panelSubida2');
+        const btnCancelar = document.getElementById('btnCancelarSubida2');
+        if (btn && panel) {
+            btn.addEventListener('click', function() {
+                panel.style.display = 'block';
+                btn.style.display = 'none';
+                panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+        }
+        if (btnCancelar && panel) {
+            btnCancelar.addEventListener('click', function() {
+                panel.style.display = 'none';
+                btn.style.display = 'inline-block';
+            });
+        }
+    })();
+</script>
+{% endif %}
+
+{# ============================================================ #}
+{# ESTADO: licencia_emitida #}
+{# ============================================================ #}
+{% if solicitud.estado == 'licencia_emitida' %}
+<div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #22c55e; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+    <h3 style="margin: 0 0 0.5rem; color: #166534; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-award"></i>
+        ¡Tu licencia está lista!
+    </h3>
+    <p style="margin: 0 0 1rem; color: #166534;">
+        Folio de licencia: <strong>{{ solicitud.ciudadano.folio_licencia }}</strong>
+        {% if solicitud.fecha_emision_licencia %}
+            <br>Emitida el {{ solicitud.fecha_emision_licencia|date:"d/m/Y" }}
+        {% endif %}
+        {% if solicitud.fecha_vigencia_padron %}
+            <br>Válida hasta el {{ solicitud.fecha_vigencia_padron|date:"d/m/Y" }}
+        {% endif %}
+    </p>
+    <a href="{% url 'usuarios:descargar_licencia' %}"
+       style="display: inline-block; background: linear-gradient(135deg, #22c55e 0%, #166534 100%); color: #fff; padding: 0.7rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: 700;">
+        <i class="fas fa-download"></i> Descargar mi licencia
+    </a>
+</div>
+{% endif %}
+
+{# ============================================================ #}
+{# ESTADO: en_revision #}
+{# ============================================================ #}
+{% if solicitud.estado == 'en_revision' %}
+<div style="background: #eff6ff; border: 2px solid #93c5fd; border-radius: 16px; padding: 2rem; text-align: center; margin-bottom: 1.5rem;">
+    <div style="font-size: 3rem; margin-bottom: 0.5rem;">⏳</div>
+    <h3 style="font-weight: 800; color: #1e40af; margin-bottom: 0.5rem;">Tu solicitud está en revisión</h3>
+    <p style="color: #1e40af;">Te notificaremos por correo cuando haya novedades.</p>
+</div>
+{% endif %}
+
+{# ============================================================ #}
+{# ESTADO: rechazada #}
+{# ============================================================ #}
+{% if solicitud.estado == 'rechazada' %}
+<div style="background: #fef2f2; border: 2px solid #fca5a5; border-radius: 16px; padding: 2rem; text-align: center; margin-bottom: 1.5rem;">
+    <div style="font-size: 3rem; margin-bottom: 0.5rem;">❌</div>
+    <h3 style="font-weight: 800; color: #991b1b; margin-bottom: 0.5rem;">Tu solicitud fue rechazada</h3>
+    <p style="color: #991b1b;">Revisa los mensajes del revisor para más detalles.</p>
+</div>
+{% endif %}
+
+{# ============================================================ #}
+{# PROGRESO GENERAL #}
+{# ============================================================ #}
+<div style="background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+        <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0;">Progreso general</h3>
+        <span style="font-weight: 800; color: #991547; font-size: 1.1rem;">{{ solicitud.porcentaje_avance }}%</span>
+    </div>
+    <div style="background: #f1f5f9; border-radius: 8px; height: 10px; overflow: hidden;">
+        <div style="width: {{ solicitud.porcentaje_avance }}%; height: 100%; background: linear-gradient(90deg, #C49955 0%, #991547 100%); border-radius: 8px; transition: 0.5s;"></div>
+    </div>
+    <p style="font-size: 0.85rem; color: #6b7280; margin-top: 0.6rem;">
+        {{ solicitud.pasos_completados }} de 4 pasos completados
+    </p>
+</div>
+
+{# ============================================================ #}
+{# CTA SIGUIENTE PASO #}
+{# ============================================================ #}
+{% if siguiente_paso %}
+<div style="background: linear-gradient(135deg, #991547 0%, #4a0a22 100%); border-radius: 16px; padding: 2rem; color: white; text-align: center; box-shadow: 0 10px 40px rgba(153,21,71,0.25);">
+    <h3 style="font-weight: 800; font-size: 1.3rem; margin-bottom: 0.5rem;">
+        {% if siguiente_paso == 1 %}Comienza tu registro{% else %}Continúa con el paso {{ siguiente_paso }}{% endif %}
+    </h3>
+    <p style="opacity: 0.9; margin-bottom: 1.2rem;">
+        {% if siguiente_paso == 1 %}Necesitamos tus datos personales para iniciar el trámite.{% endif %}
+        {% if siguiente_paso == 2 %}Sube tu comprobante de domicilio e identificación oficial.{% endif %}
+        {% if siguiente_paso == 3 %}Comparte los documentos legales de tu negocio.{% endif %}
+        {% if siguiente_paso == 4 %}Completa los cursos y sube tus constancias.{% endif %}
+    </p>
+    {% if siguiente_paso == 1 %}
+        <a href="{% url 'usuarios:paso1_datos' %}" class="btn-cta-oro" style="text-decoration: none;">Ir al Paso 1 →</a>
+    {% elif siguiente_paso == 2 %}
+        <a href="{% url 'usuarios:paso2_domicilio' %}" class="btn-cta-oro" style="text-decoration: none;">Ir al Paso 2 →</a>
+    {% elif siguiente_paso == 3 %}
+        <a href="{% url 'usuarios:paso3_documentos' %}" class="btn-cta-oro" style="text-decoration: none;">Ir al Paso 3 →</a>
+    {% elif siguiente_paso == 4 %}
+        <a href="{% url 'usuarios:paso4_cursos' %}" class="btn-cta-oro" style="text-decoration: none;">Ir al Paso 4 →</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{# ============================================================ #}
+{# MENSAJES DEL REVISOR #}
+{# ============================================================ #}
+{% if comentarios %}
+<div style="background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-top: 2rem;">
+    <h3 style="font-weight: 700; font-size: 1.1rem; margin: 0 0 1rem; color: #1f2937;">
+        <i class="fas fa-comments" style="color: #991547;"></i>
+        Mensajes del revisor
+    </h3>
+    {% for c in comentarios %}
+        <div style="border-left: 4px solid #991547; background: #f9fafb; padding: 12px 16px; margin-bottom: 12px; border-radius: 6px;">
+            <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 4px;">
+                {{ c.fecha|date:"d/m/Y H:i" }} · {{ c.get_estado_nuevo_display }}
+            </div>
+            <div style="color: #1f2937;">{{ c.comentario }}</div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

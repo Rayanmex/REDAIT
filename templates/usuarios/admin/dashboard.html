@@ -1,0 +1,275 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Panel de Solicitudes - REDAIT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_panel.css' %}">
+<style>
+  .estado-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 50px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .estado-pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+  .estado-pill.borrador         { background: #f1f5f9; color: #475569; }
+  .estado-pill.en_revision      { background: #dbeafe; color: #1e40af; }
+  .estado-pill.aprobada         { background: #dcfce7; color: #166534; }
+  .estado-pill.requiere_accion  { background: #fef3c7; color: #92400e; }
+  .estado-pill.rechazada        { background: #fee2e2; color: #991b1b; }
+  .estado-pill.licencia_emitida { background: #bbf7d0; color: #14532d; }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  .kpi-row.compact .kpi-card { padding: 1.1rem; }
+  .kpi-row.compact .kpi-valor { font-size: 1.8rem; }
+  .kpi-row.compact .kpi-label { font-size: 0.72rem; }
+
+  .folio-agente-badge {
+    display: inline-block;
+    background: #fef7fa;
+    color: #991547;
+    padding: 0.3rem 0.85rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    border: 2px solid #991547;
+    font-family: monospace;
+    white-space: nowrap;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper">
+
+  <div class="admin-header">
+    <div>
+      <h1>Panel de Solicitudes</h1>
+      <p>Vista ejecutiva de todos los trámites recibidos</p>
+    </div>
+        <div class="admin-header-actions">
+          <a href="{% url 'usuarios:admin_lista_solicitudes' %}" class="btn-redait">
+            <i class="fas fa-list"></i> Ver todas las solicitudes
+          </a>
+          <a href="{% url 'noticias:admin_lista' %}" class="btn-redait"
+            style="background: linear-gradient(135deg, #C49955 0%, #a67c3f 100%);">
+            <i class="fas fa-newspaper"></i> Noticias
+            {% if noticias_borrador %}
+              <span style="background: white; color: #C49955; padding: 0.1rem 0.5rem;
+                          border-radius: 50px; font-size: 0.7rem; font-weight: 800;
+                          margin-left: 0.4rem;">
+                {{ noticias_borrador }}
+              </span>
+            {% endif %}
+          </a>
+          <a href="{% url 'noticias:admin_crear' %}" class="btn-redait-outline">
+            <i class="fas fa-plus"></i> Nueva noticia
+          </a>
+        </div>
+  </div>
+
+  <!-- FILA 1: KPIs ACCIONABLES -->
+  <div class="kpi-row">
+    <div class="kpi-card" style="border-left-color: #3b82f6;">
+      <div class="kpi-label">En revisión</div>
+      <div class="kpi-valor">{{ pendientes }}</div>
+      <i class="fas fa-clock kpi-icon"></i>
+    </div>
+    <div class="kpi-card" style="border-left-color: #f59e0b;">
+      <div class="kpi-label">Requiere acción</div>
+      <div class="kpi-valor">{{ requiere_accion }}</div>
+      <i class="fas fa-exclamation-triangle kpi-icon"></i>
+    </div>
+    <div class="kpi-card" style="border-left-color: #06b6d4;">
+      <div class="kpi-label">Pagos por validar</div>
+      <div class="kpi-valor">{{ pagos_cargados }}</div>
+      <i class="fas fa-file-invoice-dollar kpi-icon"></i>
+    </div>
+    <div class="kpi-card" style="border-left-color: #22c55e;">
+      <div class="kpi-label">Licencias emitidas</div>
+      <div class="kpi-valor">{{ licencias_emitidas }}</div>
+      <i class="fas fa-award kpi-icon"></i>
+    </div>
+  </div>
+
+  <!-- FILA 2: KPIs HISTÓRICOS -->
+  <div class="kpi-row compact">
+    <div class="kpi-card" style="border-left-color: #10b981;">
+      <div class="kpi-label">Aprobadas</div>
+      <div class="kpi-valor">{{ aprobadas }}</div>
+    </div>
+    <div class="kpi-card" style="border-left-color: #ef4444;">
+      <div class="kpi-label">Rechazadas</div>
+      <div class="kpi-valor">{{ rechazadas }}</div>
+    </div>
+    <div class="kpi-card" style="border-left-color: #C49955;">
+      <div class="kpi-label">Este mes</div>
+      <div class="kpi-valor">{{ este_mes }}</div>
+    </div>
+    <div class="kpi-card" style="border-left-color: #991547;">
+      <div class="kpi-label">Total activo</div>
+      <div class="kpi-valor">{{ total }}</div>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filtros-card">
+    <form method="get" action="{% url 'usuarios:admin_lista_solicitudes' %}">
+      <div class="filtros-grid">
+        <div class="form-field">
+          <label>Folio de agente</label>
+          <input type="text" name="folio" placeholder="Ej. 0400">
+        </div>
+        <div class="form-field">
+          <label>Estado</label>
+          <select name="estado">
+            <option value="">Todos</option>
+            {% for valor, etiqueta in estados %}
+              <option value="{{ valor }}">{{ etiqueta }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Tipo de trámite</label>
+          <select name="tipo">
+            <option value="">Todos</option>
+            {% for valor, etiqueta in tipos %}
+              <option value="{{ valor }}">{{ etiqueta }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Desde</label>
+          <input type="date" name="desde">
+        </div>
+        <div class="form-field">
+          <label>Hasta</label>
+          <input type="date" name="hasta">
+        </div>
+        <div class="form-field">
+          <label>Ordenar por</label>
+          <select name="orden">
+            <option value="-fecha_envio">Más recientes</option>
+            <option value="fecha_envio">Más antiguas</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filtros-botones">
+        <button type="submit" class="btn-redait">
+          <i class="fas fa-search"></i> Buscar
+        </button>
+        <a href="{% url 'usuarios:admin_dashboard' %}" class="btn-redait-outline">
+          <i class="fas fa-times"></i> Limpiar
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- TABLA -->
+  <div class="tabla-solicitudes">
+    <div style="padding: 1.3rem 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem;">
+      <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text-dark);">
+        <i class="fas fa-inbox" style="color: var(--primary);"></i>
+        Últimas 10 solicitudes recibidas
+      </h3>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <a href="{% url 'usuarios:admin_lista_solicitudes' %}"
+           style="display: inline-flex; align-items: center; gap: 0.5rem; background: #fef7fa; color: #991547; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: 700; font-size: 0.85rem; text-decoration: none; border: 2px solid #991547;">
+            <i class="fas fa-list"></i> Ver todas
+        </a>
+        <a href="{% url 'usuarios:admin_exportar_excel' %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}"
+          style="display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #22c55e 0%, #166534 100%); color: white; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: 700; font-size: 0.85rem; text-decoration: none; box-shadow: 0 4px 15px rgba(34,197,94,0.3); transition: 0.3s;">
+            <i class="fas fa-file-excel"></i> Descargar Excel
+        </a>
+      </div>
+    </div>
+
+    {% if ultimas %}
+      <table>
+        <thead>
+          <tr>
+            <th>Folio agente</th>
+            <th>Ciudadano</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in ultimas %}
+            <tr {% if not s.ciudadano.activo %}style="background: #fef2f2;"{% endif %}>
+              <td>
+                {% if s.ciudadano.folio_licencia %}
+                  <span class="folio-agente-badge">{{ s.ciudadano.folio_licencia }}</span>
+                {% else %}
+                  <span style="color: #9ca3af;">—</span>
+                {% endif %}
+                {% if not s.ciudadano.activo %}
+                  <br>
+                  <span style="background: #fee2e2; color: #991b1b; padding: 0.15rem 0.5rem;
+                               border-radius: 50px; font-size: 0.65rem; font-weight: 700;">
+                    🚫 DESACTIVADO
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                <strong>{{ s.ciudadano.nombre_completo }}</strong>
+              </td>
+              <td>
+                <small style="color: var(--text-gray);">{{ s.ciudadano.user.email }}</small>
+              </td>
+              <td>
+                <strong style="color: #991547; font-family: monospace; font-size: 0.9rem;">
+                  {{ s.ciudadano.telefono|default:"—" }}
+                </strong>
+              </td>
+              <td>{{ s.get_tipo_tramite_display }}</td>
+              <td>
+                <span class="estado-pill {{ s.estado }}">{{ s.estado_display_completo }}</span>
+              </td>
+              <td>
+                {{ s.fecha_envio|date:"d/m/Y" }}<br>
+                <small style="color: var(--text-gray);">{{ s.fecha_envio|date:"H:i" }}</small>
+              </td>
+              <td>
+                <a href="{% url 'usuarios:admin_detalle_solicitud' s.id %}" class="btn-tabla">
+                  Revisar <i class="fas fa-arrow-right"></i>
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No hay solicitudes recibidas todavía.</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

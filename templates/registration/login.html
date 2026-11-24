@@ -1,0 +1,60 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesión - REDAIT{% endblock %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 4rem auto; padding: 0 1.5rem;">
+    <div style="background: white; border-radius: 16px; padding: 2.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <img src="{% static 'images/logo.png' %}" alt="REDAIT" style="height: 50px; width: auto; margin-bottom: 0.5rem;">
+            <h2 style="font-weight: 800; color: #1f2937; margin-bottom: 0.3rem;">Iniciar Sesión</h2>
+            <p style="color: #6b7280; font-size: 0.9rem;">Accede a tu panel de REDAIT</p>
+        </div>
+
+        {% if form.errors %}
+        <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; color: #991b1b; font-size: 0.9rem;">
+            <i class="fas fa-exclamation-circle"></i> Usuario o contraseña incorrectos. Por favor, inténtalo de nuevo.
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 1.2rem;">
+                <label for="id_username" style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.3rem;">Usuario o correo electrónico</label>
+                <input type="text" name="username" id="id_username" class="form-control" placeholder="Ingresa tu usuario" style="width: 100%; padding: 0.8rem 1rem; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 1rem; transition: 0.3s;">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label for="id_password" style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.3rem;">Contraseña</label>
+                <input type="password" name="password" id="id_password" class="form-control" placeholder="Ingresa tu contraseña" style="width: 100%; padding: 0.8rem 1rem; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 1rem; transition: 0.3s;">
+            </div>
+
+            <button type="submit" style="width: 100%; background: #991547; color: white; padding: 0.8rem; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s;">
+                Iniciar Sesión
+            </button>
+
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+
+        <div style="border-top: 1px solid #f1f5f9; margin-top: 1.5rem; padding-top: 1.5rem; text-align: center;">
+            <p style="color: #6b7280; font-size: 0.9rem;">
+                ¿No tienes cuenta? 
+                <a href="{% url 'usuarios:registro_ciudadano' %}" ...>Regístrate aquí</a>
+            </p>
+            <p style="color: #6b7280; font-size: 0.85rem; margin-top: 0.5rem;">
+                <a href="#" ...>¿Olvidaste tu contraseña?</a>
+            </p>
+            <!-- ⬇️ AGREGA ESTO -->
+            <p style="color: #6b7280; font-size: 0.85rem; margin-top: 0.5rem;">
+                Al continuar aceptas nuestro
+                <a href="{% url 'usuarios:aviso_privacidad' %}" target="_blank"
+                style="color: #991547; font-weight: 600; text-decoration: none;">
+                    Aviso de Privacidad
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

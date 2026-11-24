@@ -1,0 +1,368 @@
+/* ============================================
+   FORMULARIOS DE PASOS
+   Fondo con textura de cajas + tarjeta blanca
+   ============================================ */
+
+/* Contenedor general del formulario con fondo */
+.form-page-wrapper {
+    background-image: url('/static/images/texturas/fondo cajas.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+    min-height: calc(100vh - 200px);
+    padding: 2rem 1.5rem;
+    border-radius: 24px;
+    margin-bottom: 2rem;
+}
+
+.form-page-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 24px;
+    z-index: 1;
+}
+
+.form-page-wrapper > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Tarjeta del formulario */
+.form-card-full {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    max-width: 100%;
+    width: 100%;
+}
+
+/* Encabezado del formulario */
+.form-card-full .form-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.form-card-full .form-header h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin-bottom: 0.3rem;
+}
+
+.form-card-full .form-header p {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+/* Indicador de paso */
+.form-step-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #C49955 0%, #991547 100%);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.8rem;
+}
+
+/* ============================================
+   GRID DE CAMPOS
+   ============================================ */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+}
+
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+}
+
+.form-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+}
+
+/* ============================================
+   CAMPOS
+   ============================================ */
+
+.form-field {
+    margin-bottom: 0;
+}
+
+.form-field label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1f2937;
+    margin-bottom: 0.4rem;
+}
+
+.form-field label .required {
+    color: #991547;
+    margin-left: 0.2rem;
+}
+
+.form-field input[type="text"],
+.form-field input[type="email"],
+.form-field input[type="tel"],
+.form-field input[type="number"],
+.form-field select,
+.form-field textarea {
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    color: #1f2937;
+    background: white;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    outline: none;
+    border-color: #991547;
+    box-shadow: 0 0 0 4px rgba(153, 21, 71, 0.1);
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+    color: #9ca3af;
+}
+
+.form-field textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-field .help-text {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 0.4rem;
+}
+
+/* ============================================
+   ARCHIVOS (DROPZONE)
+   ============================================ */
+
+.file-dropzone {
+    padding: 1.5rem;
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    background: #fafbfc;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.file-dropzone:hover {
+    border-color: #991547;
+    background: #fef7fa;
+}
+
+.file-dropzone input[type="file"] {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.file-dropzone input[type="file"]::file-selector-button {
+    background: #991547;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 1rem;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.file-dropzone input[type="file"]::file-selector-button:hover {
+    background: #4a0a22;
+    transform: translateY(-1px);
+}
+
+.file-dropzone .file-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1f2937;
+    margin-bottom: 0.3rem;
+}
+
+.file-dropzone .file-help {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-bottom: 0.8rem;
+}
+
+.file-dropzone .file-uploaded {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: #166534;
+    background: #f0fdf4;
+    padding: 0.4rem 0.9rem;
+    border-radius: 50px;
+    margin-top: 0.8rem;
+    font-weight: 500;
+}
+
+.file-dropzone .file-uploaded a {
+    color: #166534;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+/* Preview de imagen */
+.file-preview {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.file-preview img {
+    max-width: 150px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #f1f5f9;
+}
+
+.form-actions .btn-cancel {
+    flex: 1;
+    text-align: center;
+    padding: 0.9rem 1.5rem;
+    border-radius: 50px;
+    border: 2px solid #991547;
+    color: #991547;
+    font-weight: 600;
+    text-decoration: none;
+    background: white;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.form-actions .btn-cancel:hover {
+    background: #fdf2f5;
+}
+
+.form-actions .btn-save {
+    flex: 2;
+    background: linear-gradient(135deg, #991547 0%, #4a0a22 100%);
+    color: white;
+    padding: 0.9rem 2rem;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-actions .btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(153, 21, 71, 0.3);
+}
+
+.form-actions .btn-save.btn-success {
+    background: linear-gradient(135deg, #2d7d46 0%, #166534 100%);
+}
+
+/* ============================================
+   ALERTAS
+   ============================================ */
+
+.alert-success,
+.alert-error {
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.alert-success {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    color: #166534;
+}
+
+.alert-error {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 900px) {
+    .form-grid-2,
+    .form-grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .form-card-full {
+        padding: 1.5rem;
+    }
+
+    .form-page-wrapper {
+        padding: 1rem;
+        background-attachment: scroll;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn-cancel,
+    .form-actions .btn-save {
+        flex: 1;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-card-full .form-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .form-card-full {
+        padding: 1.2rem;
+    }
+}

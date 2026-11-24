@@ -1,0 +1,293 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Solicitudes - REDAIT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_panel.css' %}">
+<style>
+  .folio-agente-badge {
+    display: inline-block;
+    background: #fef7fa;
+    color: #991547;
+    padding: 0.3rem 0.85rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    border: 2px solid #991547;
+    font-family: monospace;
+    white-space: nowrap;
+  }
+
+  /* ====== PAGINACIÓN ====== */
+  .paginacion-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    border-top: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .paginacion-info {
+    font-size: 0.85rem;
+    color: #6b7280;
+  }
+  .paginacion-controles {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .paginacion-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 0.7rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4b5563;
+    background: white;
+    border: 1px solid #e5e7eb;
+    text-decoration: none;
+    transition: 0.2s;
+    cursor: pointer;
+  }
+  .paginacion-btn:hover {
+    background: #fef7fa;
+    border-color: #991547;
+    color: #991547;
+  }
+  .paginacion-btn.activo {
+    background: linear-gradient(135deg, #991547 0%, #771139 100%);
+    color: white;
+    border-color: #991547;
+    box-shadow: 0 4px 15px rgba(153,21,71,0.3);
+  }
+  .paginacion-btn.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+  .paginacion-ellipsis {
+    color: #9ca3af;
+    padding: 0 0.3rem;
+    user-select: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper">
+
+  <div class="admin-header">
+    <div>
+      <h1>Solicitudes</h1>
+      <p>{{ total_resultados }} resultado{{ total_resultados|pluralize }} encontrado{{ total_resultados|pluralize }}</p>
+    </div>
+        <div class="admin-header-actions">
+        <a href="{% url 'noticias:admin_lista' %}" class="btn-redait"
+           style="background: linear-gradient(135deg, #C49955 0%, #a67c3f 100%);">
+            <i class="fas fa-newspaper"></i> Noticias
+        </a>
+        <a href="{% url 'usuarios:admin_exportar_excel' %}{% if request.GET.urlencode %}?{{ request.GET.urlencode }}{% endif %}"
+          class="btn-redait" style="background: linear-gradient(135deg, #22c55e 0%, #166534 100%);">
+            <i class="fas fa-file-excel"></i> Exportar Excel
+        </a>
+        <a href="{% url 'usuarios:admin_dashboard' %}" class="btn-redait-outline">
+            <i class="fas fa-chart-line"></i> Dashboard
+        </a>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros-card">
+    <form method="get">
+      <div class="filtros-grid">
+        <div class="form-field">
+          <label>Folio de agente</label>
+          <input type="text" name="folio" value="{{ filtros.folio }}" placeholder="Ej. 0400">
+        </div>
+        <div class="form-field">
+          <label>Estado</label>
+          <select name="estado">
+            <option value="">Todos</option>
+            {% for valor, etiqueta in estados %}
+              <option value="{{ valor }}" {% if filtros.estado == valor %}selected{% endif %}>
+                {{ etiqueta }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Tipo de trámite</label>
+          <select name="tipo">
+            <option value="">Todos</option>
+            {% for valor, etiqueta in tipos %}
+              <option value="{{ valor }}" {% if filtros.tipo == valor %}selected{% endif %}>
+                {{ etiqueta }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Desde</label>
+          <input type="date" name="desde" value="{{ filtros.desde }}">
+        </div>
+        <div class="form-field">
+          <label>Hasta</label>
+          <input type="date" name="hasta" value="{{ filtros.hasta }}">
+        </div>
+        <div class="form-field">
+          <label>Ordenar por</label>
+          <select name="orden">
+            <option value="-fecha_envio" {% if filtros.orden == '-fecha_envio' %}selected{% endif %}>Más recientes</option>
+            <option value="fecha_envio" {% if filtros.orden == 'fecha_envio' %}selected{% endif %}>Más antiguas</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filtros-botones">
+        <button type="submit" class="btn-redait">
+          <i class="fas fa-search"></i> Buscar
+        </button>
+        <a href="{% url 'usuarios:admin_lista_solicitudes' %}" class="btn-redait-outline">
+          <i class="fas fa-times"></i> Limpiar
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabla -->
+  <div class="tabla-solicitudes">
+    {% if solicitudes %}
+      <table>
+        <thead>
+          <tr>
+            <th>Folio agente</th>
+            <th>Ciudadano</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Fecha de envío</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in solicitudes %}
+            <tr {% if not s.ciudadano.activo %}style="background: #fef2f2;"{% endif %}>
+              <td>
+                {% if s.ciudadano.folio_licencia %}
+                  <span class="folio-agente-badge">{{ s.ciudadano.folio_licencia }}</span>
+                {% else %}
+                  <span style="color: #9ca3af;">—</span>
+                {% endif %}
+                {% if not s.ciudadano.activo %}
+                  <br>
+                  <span style="background: #fee2e2; color: #991b1b; padding: 0.15rem 0.5rem;
+                               border-radius: 50px; font-size: 0.65rem; font-weight: 700;">
+                    🚫 DESACTIVADO
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                <strong>{{ s.ciudadano.nombre_completo }}</strong>
+              </td>
+              <td>
+                <small style="color: var(--text-gray);">{{ s.ciudadano.user.email }}</small>
+              </td>
+              <td>
+                <strong style="color: #991547; font-family: monospace; font-size: 0.9rem;">
+                  {{ s.ciudadano.telefono|default:"—" }}
+                </strong>
+              </td>
+              <td>{{ s.get_tipo_tramite_display }}</td>
+              <td><span class="estado-pill {{ s.estado }}">{{ s.get_estado_display }}</span></td>
+              <td>
+                {{ s.fecha_envio|date:"d/m/Y" }}
+                <br>
+                <small style="color: var(--text-gray);">{{ s.fecha_envio|date:"H:i" }}</small>
+              </td>
+              <td>
+                <a href="{% url 'usuarios:admin_detalle_solicitud' s.id %}" class="btn-tabla">
+                  Revisar
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {# ====== PAGINACIÓN ====== #}
+      {% if page_obj.paginator.num_pages > 1 %}
+        <div class="paginacion-wrap">
+          <div class="paginacion-info">
+            Mostrando
+            <strong>{{ page_obj.start_index }}</strong>–<strong>{{ page_obj.end_index }}</strong>
+            de <strong>{{ page_obj.paginator.count }}</strong> solicitudes
+            · Página <strong>{{ page_obj.number }}</strong> de <strong>{{ page_obj.paginator.num_pages }}</strong>
+          </div>
+
+          <div class="paginacion-controles">
+            {# Primera #}
+            {% if page_obj.has_previous %}
+              <a href="?{% for k, v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page=1"
+                 class="paginacion-btn" title="Primera">
+                <i class="fas fa-angle-double-left"></i>
+              </a>
+              <a href="?{% for k, v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+                 class="paginacion-btn" title="Anterior">
+                <i class="fas fa-angle-left"></i>
+              </a>
+            {% else %}
+              <span class="paginacion-btn disabled"><i class="fas fa-angle-double-left"></i></span>
+              <span class="paginacion-btn disabled"><i class="fas fa-angle-left"></i></span>
+            {% endif %}
+
+            {# Números de página #}
+            {% for num in page_obj.paginator.page_range %}
+              {% if num == page_obj.number %}
+                <span class="paginacion-btn activo">{{ num }}</span>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?{% for k, v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ num }}"
+                   class="paginacion-btn">{{ num }}</a>
+              {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                <a href="?{% for k, v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ num }}"
+                   class="paginacion-btn">{{ num }}</a>
+              {% elif num == page_obj.number|add:'-3' or num == page_obj.number|add:'3' %}
+                <span class="paginacion-ellipsis">…</span>
+              {% endif %}
+            {% endfor %}
+
+            {# Siguiente #}
+            {% if page_obj.has_next %}
+              <a href="?{% for k, v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+                 class="paginacion-btn" title="Siguiente">
+                <i class="fas fa-angle-right"></i>
+              </a>
+              <a href="?{% for k, v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ page_obj.paginator.num_pages }}"
+                 class="paginacion-btn" title="Última">
+                <i class="fas fa-angle-double-right"></i>
+              </a>
+            {% else %}
+              <span class="paginacion-btn disabled"><i class="fas fa-angle-right"></i></span>
+              <span class="paginacion-btn disabled"><i class="fas fa-angle-double-right"></i></span>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+    {% else %}
+      <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <p>No se encontraron solicitudes con esos filtros.</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

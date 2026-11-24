@@ -1,0 +1,172 @@
+/* ============================================
+   DASHBOARD LAYOUT
+   ============================================ */
+
+.dashboard-layout {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem 1.5rem;
+    min-height: 70vh;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: flex-start;   /* ← CLAVE para que sticky funcione */
+}
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+
+.sidebar-dashboard {
+    width: 280px;
+    flex-shrink: 0;
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    height: fit-content;
+    position: sticky;
+    top: 100px;
+    align-self: flex-start;    /* ← CLAVE para que sticky funcione */
+}
+
+.sidebar-dashboard .user-info {
+    text-align: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 1rem;
+}
+
+.sidebar-dashboard .user-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #991547, #4a0a22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.8rem;
+    font-size: 2rem;
+    color: white;
+}
+
+.sidebar-dashboard .user-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.sidebar-dashboard .user-email {
+    color: #6b7280;
+    font-size: 0.85rem;
+    word-break: break-all;
+}
+
+.sidebar-dashboard .nav-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.sidebar-dashboard .nav-dashboard a {
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    color: #4a5568;
+    text-decoration: none;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.sidebar-dashboard .nav-dashboard a:hover {
+    background: #f8fafc;
+    color: #991547;
+}
+
+.sidebar-dashboard .nav-dashboard a.active {
+    background: #991547;
+    color: white;
+}
+
+.sidebar-dashboard .nav-dashboard a i {
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-dashboard .nav-dashboard a .step-status {
+    margin-left: auto;
+    font-size: 0.75rem;
+}
+
+.sidebar-dashboard .nav-dashboard a .step-status.ok {
+    color: #22c55e;
+}
+
+.sidebar-dashboard .nav-dashboard a .step-status.pending {
+    color: #d1d5db;
+}
+
+.sidebar-dashboard .nav-dashboard a.active .step-status {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.sidebar-dashboard .nav-divider {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* ============================================
+   CONTENT AREA
+   ============================================ */
+
+.content-dashboard {
+    flex: 1;
+    min-width: 0;
+}
+
+.page-header-dashboard {
+    margin-bottom: 2rem;
+}
+
+.page-header-dashboard h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin-bottom: 0.3rem;
+}
+
+.page-header-dashboard p {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 900px) {
+    .dashboard-layout {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .sidebar-dashboard {
+        width: 100%;
+        position: static;
+        align-self: stretch;
+    }
+
+    .sidebar-dashboard .nav-dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header-dashboard h1 {
+        font-size: 1.4rem;
+    }
+}

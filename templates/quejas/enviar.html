@@ -1,0 +1,127 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Buzón de Quejas y Sugerencias - REDAIT{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 3rem auto; padding: 0 1.5rem;">
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="font-weight: 800; color: #1f2937; font-size: 2rem;">
+            Contacto
+        </h1>
+        <p style="color: #6b7280; max-width: 500px; margin: 0.5rem auto 0;">
+            Envíanos tus quejas, sugerencias o denuncias relacionadas con el servicio de guías de turistas.
+        </p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 1rem 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; color: #166534;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;">
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div style="background: #fef2f2; border-left: 4px solid #991b1b; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; color: #991b1b;">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div style="margin-bottom: 1.2rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                    {{ form.tipo.label }}
+                </label>
+                {{ form.tipo }}
+                {% if form.tipo.errors %}
+                    <p style="color: #991b1b; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.tipo.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div style="margin-bottom: 1.2rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                    {{ form.nombre_completo.label }}
+                </label>
+                {{ form.nombre_completo }}
+                {% if form.nombre_completo.errors %}
+                    <p style="color: #991b1b; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.nombre_completo.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                        {{ form.email.label }}
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <p style="color: #991b1b; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                        {{ form.telefono.label }}
+                    </label>
+                    {{ form.telefono }}
+                    {% if form.telefono.errors %}
+                        <p style="color: #991b1b; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.telefono.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.2rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                    {{ form.asunto.label }}
+                </label>
+                {{ form.asunto }}
+                {% if form.asunto.errors %}
+                    <p style="color: #991b1b; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.asunto.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div style="margin-bottom: 1.2rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                    {{ form.mensaje.label }}
+                </label>
+                {{ form.mensaje }}
+                {% if form.mensaje.errors %}
+                    <p style="color: #991b1b; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.mensaje.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.9rem; color: #1f2937; margin-bottom: 0.4rem;">
+                    {{ form.archivo_adjunto.label }}
+                </label>
+                {{ form.archivo_adjunto }}
+                {% if form.archivo_adjunto.help_text %}
+                    <p style="color: #6b7280; font-size: 0.8rem; margin-top: 0.3rem;">{{ form.archivo_adjunto.help_text }}</p>
+                {% endif %}
+                {% if form.archivo_adjunto.errors %}
+                    <p style="color: #991b1b; font-size: 0.85rem; margin-top: 0.3rem;">{{ form.archivo_adjunto.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit"
+                    style="width: 100%; background: #991547; color: white; padding: 0.9rem; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s;">
+                <i class="fas fa-paper-plane"></i> Enviar mensaje
+            </button>
+
+        </form>
+    </div>
+
+    <div style="text-align: center; margin-top: 1.5rem;">
+        <a href="{% url 'core:inicio' %}"
+           style="color: #6b7280; text-decoration: none; font-size: 0.9rem;">
+            <i class="fas fa-arrow-left"></i> Volver al inicio
+        </a>
+    </div>
+
+</div>
+{% endblock %}

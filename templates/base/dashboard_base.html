@@ -1,0 +1,114 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/formularios.css' %}">
+<style>
+  /* Sidebar fijo al hacer scroll */
+  .dashboard-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    align-items: start;
+  }
+
+  .sidebar-dashboard {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem 1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+
+  /* Scrollbar sutil */
+  .sidebar-dashboard::-webkit-scrollbar { width: 6px; }
+  .sidebar-dashboard::-webkit-scrollbar-thumb {
+    background: #e5e7eb; border-radius: 3px;
+  }
+
+  @media (max-width: 900px) {
+    .dashboard-layout {
+      grid-template-columns: 1fr;
+    }
+    .sidebar-dashboard {
+      position: relative;
+      top: 0;
+      max-height: none;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar-dashboard">
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-name">{{ user.first_name|default:user.username }}</div>
+            <div class="user-email">{{ user.email }}</div>
+        </div>
+        <nav class="nav-dashboard">
+            <a href="{% url 'usuarios:panel' %}" class="{% if request.resolver_match.url_name == 'panel' %}active{% endif %}">
+                <i class="fas fa-home"></i> Mi Panel
+            </a>
+
+            <div class="nav-divider">
+                <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; margin-bottom: 0.5rem; padding-left: 0.5rem;">Pasos del registro</p>
+
+                <a href="{% url 'usuarios:paso1_datos' %}" class="{% if request.resolver_match.url_name == 'paso1_datos' %}active{% endif %}">
+                    <i class="fas fa-user-circle"></i> 1. Datos personales
+                    {% if solicitud.paso1_completado %}
+                        <span class="step-status ok"><i class="fas fa-check-circle"></i></span>
+                    {% else %}
+                        <span class="step-status pending"><i class="far fa-circle"></i></span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'usuarios:paso2_domicilio' %}" class="{% if request.resolver_match.url_name == 'paso2_domicilio' %}active{% endif %}">
+                    <i class="fas fa-map-marked-alt"></i> 2. Domicilio
+                    {% if solicitud.paso2_completado %}
+                        <span class="step-status ok"><i class="fas fa-check-circle"></i></span>
+                    {% else %}
+                        <span class="step-status pending"><i class="far fa-circle"></i></span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'usuarios:paso3_documentos' %}" class="{% if request.resolver_match.url_name == 'paso3_documentos' %}active{% endif %}">
+                    <i class="fas fa-file-contract"></i> 3. Documentos
+                    {% if solicitud.paso3_completado %}
+                        <span class="step-status ok"><i class="fas fa-check-circle"></i></span>
+                    {% else %}
+                        <span class="step-status pending"><i class="far fa-circle"></i></span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'usuarios:paso4_cursos' %}" class="{% if request.resolver_match.url_name == 'paso4_cursos' %}active{% endif %}">
+                    <i class="fas fa-graduation-cap"></i> 4. Cursos
+                    {% if solicitud.paso4_completado %}
+                        <span class="step-status ok"><i class="fas fa-check-circle"></i></span>
+                    {% else %}
+                        <span class="step-status pending"><i class="far fa-circle"></i></span>
+                    {% endif %}
+                </a>
+            </div>
+
+            <a href="{% url 'logout' %}" class="nav-divider" style="color: #ef4444;">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+            </a>
+        </nav>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="content-dashboard">
+        {% block panel_content %}{% endblock %}
+    </main>
+</div>
+{% endblock %}

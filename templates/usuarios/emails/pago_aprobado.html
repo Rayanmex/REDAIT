@@ -1,0 +1,31 @@
+{% extends 'usuarios/emails/base_email.html' %}
+
+{% block contenido %}
+<h2 style="color:#166534; margin:0 0 15px; font-size:20px;">✅ Pago validado</h2>
+
+<p style="font-size:15px; line-height:1.6;">Estimado(a) <strong>{{ ciudadano.nombre_completo }}</strong>,</p>
+
+<p style="font-size:15px; line-height:1.6;">
+  Tu comprobante de pago para la solicitud <strong>{{ solicitud.folio }}</strong> ha sido
+  <strong style="color:#166534;">VALIDADO</strong> correctamente.
+</p>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4; border:2px dashed #22c55e; border-radius:12px; margin:20px 0;">
+  <tr>
+    <td style="padding:20px; text-align:center;">
+      <p style="margin:0; font-size:12px; color:#6b7280; text-transform:uppercase; letter-spacing:1px;">Folio de licencia</p>
+      <p style="margin:8px 0 0; font-size:24px; font-weight:900; color:#166534; letter-spacing:2px;">{{ solicitud.ciudadano.folio_licencia }}</p>
+    </td>
+  </tr>
+</table>
+
+<p style="font-size:15px; line-height:1.6;">
+  En breve podrás descargar tu constancia oficial desde el portal.
+</p>
+
+<p style="text-align:center; margin:25px 0;">
+  <a href="{{ site_url }}/usuarios/mi-solicitud/" style="display:inline-block; background: linear-gradient(135deg,#22c55e 0%,#166534 100%); color:#fff; text-decoration:none; padding:12px 30px; border-radius:50px; font-weight:700; font-size:14px;">
+    Ver mi licencia
+  </a>
+</p>
+{% endblock %}

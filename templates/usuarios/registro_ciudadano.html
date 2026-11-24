@@ -1,0 +1,130 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Registro de Ciudadano - REDAIT{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+
+        <div class="auth-header">
+            <img src="{% static 'images/logo.png' %}" alt="REDAIT">
+            <h2>Crear cuenta</h2>
+            <p>Regístrate como ciudadano en REDAIT</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-error">
+                    <i class="fas fa-exclamation-circle"></i> {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.nombre_completo.id_for_label }}" class="form-label">Nombre completo</label>
+                {{ form.nombre_completo }}
+                {% if form.nombre_completo.errors %}
+                    <p class="form-error">{{ form.nombre_completo.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Correo electrónico</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <p class="form-error">{{ form.email.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.telefono.id_for_label }}" class="form-label">Número de teléfono</label>
+                {{ form.telefono }}
+                {% if form.telefono.errors %}
+                    <p class="form-error">{{ form.telefono.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}" class="form-label">Contraseña</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <p class="form-error">{{ form.password1.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirmar contraseña</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <p class="form-error">{{ form.password2.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-check">
+                {{ form.acepto_aviso }}
+                <label for="{{ form.acepto_aviso.id_for_label }}">
+                    He leído y acepto el
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#modalAviso">Aviso de Privacidad</a>
+                </label>
+            </div>
+            {% if form.acepto_aviso.errors %}
+                <p class="form-error" style="margin-top: -1rem; margin-bottom: 1rem;">
+                    {{ form.acepto_aviso.errors|striptags }}
+                </p>
+            {% endif %}
+
+            <button type="submit" class="btn-primary" style="width: 100%;">
+                Registrarme
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>
+                ¿Ya tienes cuenta?
+                <a href="{% url 'login' %}">Inicia sesión</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================
+     MODAL AVISO DE PRIVACIDAD
+     ============================================ -->
+<div class="modal fade modal-aviso" id="modalAviso" tabindex="-1"
+     aria-labelledby="modalAvisoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAvisoLabel">
+          <i class="fas fa-shield-alt"></i> Aviso de Privacidad
+        </h5>
+        <button type="button" class="btn-close btn-close-white"
+                data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        {% include 'usuarios/_aviso_privacidad.html' %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn-primary" onclick="aceptarAviso()">
+          <i class="fas fa-check"></i> Acepto el aviso
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function aceptarAviso() {
+    const checkbox = document.getElementById('{{ form.acepto_aviso.id_for_label }}');
+    if (checkbox) checkbox.checked = true;
+    const modalEl = document.getElementById('modalAviso');
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    if (modal) modal.hide();
+}
+</script>
+{% endblock %}

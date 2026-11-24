@@ -1,0 +1,122 @@
+{% extends 'base/dashboard_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 2rem auto;">
+
+  <div style="background: #fff; border-radius: 12px; padding: 2rem;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+
+    <h1 style="color: #991547; margin-bottom: 0.5rem;">
+      ⚠️ Conflicto de folio
+    </h1>
+    <p style="color: #4b5563; margin-bottom: 2rem;">
+      El folio <strong>{{ nuevo_folio }}</strong> ya está asignado a otro ciudadano.
+      Elige cómo resolver el conflicto.
+    </p>
+
+    <!-- Datos del ciudadano que tiene el folio -->
+    <div style="background: #fef7fa; border: 1px solid #fbcfe8;
+                border-radius: 8px; padding: 1.2rem; margin-bottom: 1.5rem;">
+      <h3 style="color: #991547; margin-top: 0; margin-bottom: 0.8rem;">
+        Ciudadano que actualmente tiene el folio
+      </h3>
+      <p style="margin: 0.3rem 0;"><strong>Nombre:</strong> {{ conflicto.nombre_completo }}</p>
+      <p style="margin: 0.3rem 0;"><strong>Email:</strong> {{ conflicto.user.email }}</p>
+      <p style="margin: 0.3rem 0;"><strong>Folio actual:</strong> {{ conflicto.folio_licencia }}</p>
+      {% if ultima_solicitud_conflicto %}
+        <p style="margin: 0.3rem 0;">
+          <strong>Vigencia:</strong>
+          {{ ultima_solicitud_conflicto.fecha_vigencia_padron|date:"d/m/Y"|default:"—" }}
+          {% if conflicto.licencia_vencida %}
+            <span style="color: #dc2626; font-weight: bold;">(VENCIDA)</span>
+          {% elif conflicto.licencia_vigente %}
+            <span style="color: #16a34a; font-weight: bold;">(VIGENTE)</span>
+          {% endif %}
+        </p>
+      {% endif %}
+      <p style="margin: 0.3rem 0;">
+        <strong>Estado:</strong>
+        {% if conflicto.activo %}
+          <span style="color: #16a34a;">Activo</span>
+        {% else %}
+          <span style="color: #dc2626;">Desactivado</span>
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- Datos del ciudadano al que se le quiere asignar -->
+    <div style="background: #f0fdf4; border: 1px solid #86efac;
+                border-radius: 8px; padding: 1.2rem; margin-bottom: 1.5rem;">
+      <h3 style="color: #166534; margin-top: 0; margin-bottom: 0.8rem;">
+        Ciudadano al que se le quiere asignar
+      </h3>
+      <p style="margin: 0.3rem 0;"><strong>Nombre:</strong> {{ solicitud.ciudadano.nombre_completo }}</p>
+      <p style="margin: 0.3rem 0;"><strong>Email:</strong> {{ solicitud.ciudadano.user.email }}</p>
+      <p style="margin: 0.3rem 0;"><strong>Folio actual:</strong> {{ solicitud.ciudadano.folio_licencia|default:"—" }}</p>
+      <p style="margin: 0.3rem 0;"><strong>Folio deseado:</strong> {{ nuevo_folio }}</p>
+    </div>
+
+    <!-- Formulario con opciones -->
+    <form method="post" action="{% url 'usuarios:admin_conflicto_folio_resolver' %}">
+      {% csrf_token %}
+
+      <div style="background: #fefce8; border-left: 4px solid #eab308;
+                  padding: 1rem 1.2rem; margin-bottom: 1.5rem; border-radius: 6px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+          Motivo (opcional, se guarda en el historial):
+        </label>
+        <textarea name="motivo" rows="2"
+                  style="width: 100%; padding: 0.6rem; border: 1px solid #d1d5db;
+                         border-radius: 6px; font-family: inherit;"
+                  placeholder="Ej. Corrección de folio duplicado por migración"></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+
+        <!-- Opción A -->
+        <button type="submit" name="opcion" value="desactivar"
+                style="background: #dc2626; color: #fff; border: none;
+                       padding: 1.2rem; border-radius: 8px; cursor: pointer;
+                       text-align: left; font-family: inherit;"
+                onclick="return confirm('¿Desactivar a {{ conflicto.nombre_completo }}? Su folio quedará libre.');">
+          <div style="font-size: 1.5rem; margin-bottom: 0.4rem;">🚫</div>
+          <div style="font-weight: bold; margin-bottom: 0.3rem;">Opción A: Desactivar</div>
+          <div style="font-size: 0.85rem; opacity: 0.9;">
+            Desactiva a <strong>{{ conflicto.nombre_completo }}</strong>,
+            libera su folio y lo reasigna a
+            <strong>{{ solicitud.ciudadano.nombre_completo }}</strong>.
+            El desactivado ya no aparecerá en el padrón.
+          </div>
+        </button>
+
+        <!-- Opción B -->
+        <button type="submit" name="opcion" value="reasignar_anterior"
+                style="background: #2563eb; color: #fff; border: none;
+                       padding: 1.2rem; border-radius: 8px; cursor: pointer;
+                       text-align: left; font-family: inherit;"
+                onclick="return confirm('¿Reasignar un folio nuevo a {{ conflicto.nombre_completo }}?');">
+          <div style="font-size: 1.5rem; margin-bottom: 0.4rem;">🔄</div>
+          <div style="font-weight: bold; margin-bottom: 0.3rem;">Opción B: Reasignar folio</div>
+          <div style="font-size: 0.85rem; opacity: 0.9;">
+            A <strong>{{ conflicto.nombre_completo }}</strong> se le asigna un folio nuevo
+            (ej. <em>{{ nuevo_folio }}-B</em>), y el folio
+            <strong>{{ nuevo_folio }}</strong> se le da a
+            <strong>{{ solicitud.ciudadano.nombre_completo }}</strong>.
+          </div>
+        </button>
+
+      </div>
+
+      <div style="text-align: center;">
+        <a href="{% url 'usuarios:admin_editar_solicitud' solicitud.id %}"
+           style="color: #6b7280; text-decoration: underline;">
+          ← Cancelar y volver al editor
+        </a>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

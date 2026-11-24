@@ -1,0 +1,238 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Verificación de Pase de Caja - REDAIT{% endblock %}
+
+{% block extra_css %}
+<style>
+  .verif-wrapper {
+    max-width: 780px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .verif-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    border: 1px solid #f1f5f9;
+  }
+
+  .verif-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .verif-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 3rem;
+    color: #fff;
+  }
+
+  .verif-icon.ok    { background: linear-gradient(135deg, #22c55e, #166534); }
+  .verif-icon.warn  { background: linear-gradient(135deg, #f59e0b, #b45309); }
+  .verif-icon.error { background: linear-gradient(135deg, #ef4444, #991b1b); }
+
+  .verif-titulo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 0.4rem;
+  }
+
+  .verif-sub {
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+
+  .verif-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+  }
+
+  .verif-tabla tr { border-bottom: 1px solid #f1f5f9; }
+  .verif-tabla tr:last-child { border-bottom: none; }
+
+  .verif-tabla th {
+    text-align: left;
+    padding: 0.9rem 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    width: 200px;
+    vertical-align: top;
+  }
+
+  .verif-tabla td {
+    padding: 0.9rem 0;
+    font-size: 0.98rem;
+    color: #1f2937;
+    font-weight: 500;
+    word-break: break-word;
+  }
+
+  .folio-destacado {
+    font-family: 'Courier New', monospace;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #991547;
+    letter-spacing: 0.02em;
+  }
+
+  .verif-box {
+    background: #f8fafc;
+    border-left: 4px solid #991547;
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1.5rem;
+    font-size: 0.92rem;
+    color: #374151;
+    line-height: 1.6;
+  }
+
+  .verif-box strong { color: #991547; }
+
+  .verif-footer {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    color: #9ca3af;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="verif-wrapper">
+
+  <div class="verif-card">
+
+    {# ============================================================ #}
+    {# CASO 1: FOLIO NO ENCONTRADO                                     #}
+    {# ============================================================ #}
+    {% if estado == 'no_encontrado' %}
+      <div class="verif-header">
+        <div class="verif-icon error">
+          <i class="fas fa-times"></i>
+        </div>
+        <h1 class="verif-titulo">Folio no encontrado</h1>
+        <p class="verif-sub">
+          No existe un pase de caja registrado con el folio
+          <strong>{{ folio_buscado }}</strong>.
+        </p>
+      </div>
+
+      <div class="verif-box">
+        Si crees que es un error, verifica que hayas escaneado correctamente
+        el código QR o comunícate con la Dirección de Desarrollo Comercial.
+      </div>
+
+    {# ============================================================ #}
+    {# CASO 2: FOLIO EXISTE PERO NO ESTÁ APROBADO                      #}
+    {# ============================================================ #}
+    {% elif estado == 'no_aprobada' %}
+      <div class="verif-header">
+        <div class="verif-icon warn">
+          <i class="fas fa-hourglass-half"></i>
+        </div>
+        <h1 class="verif-titulo">Solicitud no vigente</h1>
+        <p class="verif-sub">
+          El folio <strong>{{ folio_buscado }}</strong> no corresponde a una
+          solicitud aprobada.
+        </p>
+      </div>
+
+      <div class="verif-box">
+        <strong>Estado actual:</strong> {{ solicitud.get_estado_display }}<br>
+        Si necesitas más información, contacta a la Dirección de Desarrollo Comercial.
+      </div>
+
+    {# ============================================================ #}
+    {# CASO 3: PASE VÁLIDO                                             #}
+    {# ============================================================ #}
+    {% elif estado == 'valido' %}
+      <div class="verif-header">
+        <div class="verif-icon ok">
+          <i class="fas fa-check"></i>
+        </div>
+        <h1 class="verif-titulo">Pase de Caja Válido</h1>
+        <p class="verif-sub">
+          Este documento ha sido verificado y corresponde a un pago autorizado.
+        </p>
+      </div>
+
+      <table class="verif-tabla">
+        <tr>
+          <th>Folio</th>
+          <td><span class="folio-destacado">{{ solicitud.folio }}</span></td>
+        </tr>
+        <tr>
+          <th>Nombre del titular</th>
+          <td>{{ nombre_mostrar }}</td>
+        </tr>
+        {% if empresa_mostrar %}
+        <tr>
+          <th>Empresa</th>
+          <td>{{ empresa_mostrar }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+          <th>Número de oficio</th>
+          <td>{{ numero_oficio }}</td>
+        </tr>
+        <tr>
+          <th>Fecha de emisión</th>
+          <td>
+            {% if fecha_emision %}
+              {{ fecha_emision|date:"d/m/Y H:i" }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th>Monto a pagar</th>
+          <td>
+            <strong style="color: #991547; font-size: 1.15rem;">
+              ${{ monto|floatformat:2 }}
+            </strong>
+            <span style="color: #6b7280; font-size: 0.9rem;">
+              ({{ uma_cantidad|floatformat:2 }} UMA · ${{ uma_valor|floatformat:2 }})
+            </span>
+          </td>
+        </tr>
+      </table>
+
+      <div class="verif-box">
+        <strong>Fundamento legal:</strong><br>
+        Según la Ley de Hacienda del Estado de Tabasco, artículo 94:
+        <br><br>
+        <strong>I.</strong> Por concepto de inscripción o revalidación en el
+        Registro Estatal de Agentes Inmobiliarios del Estado de Tabasco,
+        equivalente a <strong>{{ uma_cantidad|floatformat:2 }} UMA</strong>
+        (<strong>${{ monto|floatformat:2 }}</strong>).
+        <br><br>
+        <strong>II.</strong> Por concepto de obtención de licencia inmobiliaria
+        con el número <strong>{{ solicitud.folio }}</strong> a nombre de
+        <strong>{{ nombre_mostrar }}</strong>.
+      </div>
+    {% endif %}
+
+    <div class="verif-footer">
+      REDAIT · Registro Estatal de Desarrollo y Atención Integral al Turista<br>
+      Gobierno del Estado de Tabasco
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

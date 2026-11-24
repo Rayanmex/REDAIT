@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Sesión cerrada - REDAIT{% endblock %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 4rem auto; padding: 0 1.5rem; text-align: center;">
+    <div style="background: white; border-radius: 16px; padding: 2.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">👋</div>
+        <h2 style="font-weight: 800; color: #1f2937; margin-bottom: 0.5rem;">Sesión cerrada</h2>
+        <p style="color: #6b7280; margin-bottom: 2rem;">Has cerrado sesión exitosamente.</p>
+        <a href="{% url 'login' %}" style="background: #991547; color: white; padding: 0.8rem 2.5rem; border-radius: 12px; font-weight: 700; text-decoration: none; display: inline-block;">Iniciar sesión nuevamente</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Capacitaciones - REDAIT{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 4rem 1.5rem;">
+    <h1 style="font-size: 2.5rem; font-weight: 800; color: #991547; margin-bottom: 1rem;">Capacitaciones para Guías de Turistas</h1>
+    <p style="color: #6b7280; margin-bottom: 2rem;">Cursos y talleres de capacitación para guías de turistas en Tabasco</p>
+    
+    <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+        <p style="text-align: center; color: #6b7280; padding: 3rem 0;">
+            <i class="fas fa-graduation-cap" style="font-size: 3rem; color: #991547; display: block; margin-bottom: 1rem;"></i>
+            Catálogo de capacitaciones en construcción
+        </p>
+        <a href="{% url 'core:inicio' %}" style="display: inline-block; background: #991547; color: white; padding: 0.8rem 2.5rem; border-radius: 50px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;">
+            <i class="fas fa-arrow-left"></i> Volver al inicio
+        </a>
+    </div>
+</div>
+{% endblock %}

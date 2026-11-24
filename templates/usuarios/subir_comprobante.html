@@ -1,0 +1,73 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Subir comprobante de pago · REDAIT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/solicitud.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="resumen-wrapper" style="max-width: 680px;">
+
+  <div class="resumen-header">
+    <h1>Subir comprobante de pago</h1>
+    <p>Folio <strong>{{ solicitud.folio }}</strong></p>
+  </div>
+
+  {% if solicitud.estado == 'pago_rechazado' %}
+    <div class="resumen-info" style="background: #fef2f2; border-left-color: #991b1b; color: #991b1b;">
+      <strong>Tu comprobante anterior fue rechazado.</strong>
+      {% if solicitud.comentario_comprobante %}
+        <p style="margin: 0.5rem 0 0; font-size: 0.9rem;">
+          Motivo: {{ solicitud.comentario_comprobante }}
+        </p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="resumen-card" style="padding: 2rem;">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-field">
+        <label>Comprobante de pago <span class="required">*</span></label>
+        <input type="file" name="comprobante_pago"
+               accept=".pdf,.jpg,.jpeg,.png" required
+               style="width: 100%; padding: 0.9rem; border: 2px dashed #d1d5db;
+                      border-radius: 12px; background: #fafbfc;">
+        <p class="help-text">Formatos permitidos: PDF, JPG o PNG. Máximo 5 MB.</p>
+      </div>
+
+      <div class="form-field" style="margin-top: 1.2rem;">
+        <label>Referencia o folio bancario</label>
+        <input type="text" name="referencia_pago" maxlength="100"
+               placeholder="Ej. 1234567890"
+               style="width: 100%;">
+        <p class="help-text">Opcional pero recomendado para identificar tu pago.</p>
+      </div>
+
+      <div class="form-field" style="margin-top: 1.2rem;">
+        <label>Monto pagado (MXN)</label>
+        <input type="number" name="monto_pago" step="0.01" min="0"
+               value="{{ solicitud.monto_pago|default:'' }}"
+               placeholder="703.86"
+               style="width: 100%;">
+      </div>
+
+      <div class="resumen-acciones" style="margin-top: 2rem; padding: 1.5rem; background: #fef7fa; border-radius: 12px;">
+        <button type="submit" class="btn-enviar">
+          <i class="fas fa-upload"></i> Enviar comprobante
+        </button>
+        <div style="margin-top: 1rem;">
+          <a href="{% url 'usuarios:mi_solicitud' %}" class="btn-redait-outline">
+            Cancelar
+          </a>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+{% endblock %}

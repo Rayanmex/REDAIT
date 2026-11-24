@@ -1,0 +1,122 @@
+{% extends 'base/dashboard_base.html' %}
+{% load static %}
+
+{% block panel_content %}
+
+<div class="form-page-wrapper">
+    <div class="form-card-full">
+
+        <div class="form-header">
+            <span class="form-step-badge">Paso 2 de 4</span>
+            <h1>Domicilio e identificación</h1>
+            <p>Necesitamos validar tu domicilio y tu identidad</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="municipio">Municipio <span class="required">*</span></label>
+                        <select name="municipio" id="municipio" required>
+                            <option value="">Selecciona un municipio...</option>
+                            {% for valor, etiqueta in municipios %}
+                                <option value="{{ valor }}" {% if domicilio.municipio == valor %}selected{% endif %}>{{ etiqueta }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="calle_numero_colonia_cp">Calle, Número, Colonia y C.P. <span class="required">*</span></label>
+                        <input type="text" name="calle_numero_colonia_cp" id="calle_numero_colonia_cp"
+                               placeholder="Ej: AV. PASEO TABASCO 1504, COL. TABASCO 2000, C.P. 86035"
+                               style="text-transform: uppercase;"
+                               value="{{ domicilio.calle_numero_colonia_cp }}" required>
+                        <p class="help-text">Se guardará en MAYÚSCULAS automáticamente.</p>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <div class="file-dropzone">
+                        <span class="file-label">Comprobante de domicilio actualizado <span class="required">*</span></span>
+                        <p class="file-help">Comprobante de luz, teléfono o agua, no mayor a 2 meses de antigüedad. En formato PDF.</p>
+                        <input type="file" name="comprobante_domicilio" accept=".pdf">
+                        {% if domicilio.comprobante_domicilio %}
+                            <span class="file-uploaded">
+                                <i class="fas fa-check-circle"></i>
+                                Archivo subido —
+                                <a href="{{ domicilio.comprobante_domicilio.url }}" target="_blank">Ver</a>
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <div class="file-dropzone">
+                        <span class="file-label">Identificación oficial vigente (INE) <span class="required">*</span></span>
+                        <p class="file-help">Copia con fotografía. Puede ser INE, Pasaporte o Licencia de manejo. En formato PDF.</p>
+                        <input type="file" name="identificacion_oficial" accept=".pdf">
+                        {% if domicilio.identificacion_oficial %}
+                            <span class="file-uploaded">
+                                <i class="fas fa-check-circle"></i>
+                                Archivo subido —
+                                <a href="{{ domicilio.identificacion_oficial.url }}" target="_blank">Ver</a>
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <div class="file-dropzone">
+                        <span class="file-label">Foto del agente inmobiliario <span class="required">*</span></span>
+                        <p class="file-help">Foto a color o blanco y negro digitalizada. En formato JPG o PNG. Se ajustará automáticamente al marco del sistema.</p>
+                        <input type="file" name="foto_agente" accept="image/jpeg,image/png">
+                        {% if domicilio.foto_agente %}
+                            <div class="file-preview">
+                                <img src="{{ domicilio.foto_agente.url }}" alt="Foto del agente">
+                                <p style="font-size: 0.85rem; color: #166534; margin-top: 0.5rem;">
+                                    <i class="fas fa-check-circle"></i> Foto subida
+                                </p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'usuarios:panel' %}" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn-save">
+                    Guardar y continuar <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    // Convierte a MAYÚSCULAS mientras el usuario escribe
+    document.addEventListener('DOMContentLoaded', function() {
+        var inputDireccion = document.getElementById('calle_numero_colonia_cp');
+        if (inputDireccion) {
+            inputDireccion.addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        }
+    });
+</script>
+
+{% endblock %}

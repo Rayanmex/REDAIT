@@ -1,0 +1,117 @@
+{% extends 'base/dashboard_base.html' %}
+{% load static %}
+
+{% block panel_content %}
+<div class="page-header-dashboard">
+    <h1>📄 Documentos y Pago</h1>
+    <p>Sube tu documentación y realiza el pago de tu licencia</p>
+</div>
+
+<!-- DOCUMENTOS -->
+<div style="background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 2rem;">
+    <h3 style="font-weight: 700; margin-bottom: 1rem;">📎 Sube tus documentos</h3>
+    
+    <div style="display: grid; gap: 0.8rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: #f8fafc; border-radius: 12px;">
+            <div>
+                <p style="font-weight: 600; margin: 0;">Identificación oficial</p>
+                <p style="color: #6b7280; font-size: 0.8rem; margin: 0;">INE o pasaporte vigente</p>
+            </div>
+            <div>
+                <span style="color: #6b7280; font-size: 0.8rem;">No subido</span>
+                <a href="#" style="background: #991547; color: white; padding: 0.3rem 1.2rem; border-radius: 8px; font-size: 0.8rem; text-decoration: none; font-weight: 600; margin-left: 0.5rem;">Subir</a>
+            </div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: #dcfce7; border-radius: 12px;">
+            <div>
+                <p style="font-weight: 600; margin: 0;">Comprobante de domicilio</p>
+                <p style="color: #6b7280; font-size: 0.8rem; margin: 0;">Actualizado</p>
+            </div>
+            <div>
+                <span style="color: #16a34a; font-size: 0.8rem;">✅ Subido</span>
+                <a href="#" style="background: #6b7280; color: white; padding: 0.3rem 1.2rem; border-radius: 8px; font-size: 0.8rem; text-decoration: none; font-weight: 600; margin-left: 0.5rem;">Ver</a>
+            </div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: #f8fafc; border-radius: 12px;">
+            <div>
+                <p style="font-weight: 600; margin: 0;">Constancia PROFECO</p>
+                <p style="color: #6b7280; font-size: 0.8rem; margin: 0;">Registro de Contrato de Adhesión</p>
+            </div>
+            <div>
+                <span style="color: #6b7280; font-size: 0.8rem;">No subido</span>
+                <a href="#" style="background: #991547; color: white; padding: 0.3rem 1.2rem; border-radius: 8px; font-size: 0.8rem; text-decoration: none; font-weight: 600; margin-left: 0.5rem;">Subir</a>
+            </div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: #f8fafc; border-radius: 12px;">
+            <div>
+                <p style="font-weight: 600; margin: 0;">Diploma de capacitación</p>
+                <p style="color: #6b7280; font-size: 0.8rem; margin: 0;">Corretaje inmobiliario</p>
+            </div>
+            <div>
+                <span style="color: #6b7280; font-size: 0.8rem;">No subido</span>
+                <a href="#" style="background: #991547; color: white; padding: 0.3rem 1.2rem; border-radius: 8px; font-size: 0.8rem; text-decoration: none; font-weight: 600; margin-left: 0.5rem;">Subir</a>
+            </div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: #f8fafc; border-radius: 12px;">
+            <div>
+                <p style="font-weight: 600; margin: 0;">Carta de No Antecedentes Penales</p>
+                <p style="color: #6b7280; font-size: 0.8rem; margin: 0;">Del representante legal</p>
+            </div>
+            <div>
+                <span style="color: #6b7280; font-size: 0.8rem;">No subido</span>
+                <a href="#" style="background: #991547; color: white; padding: 0.3rem 1.2rem; border-radius: 8px; font-size: 0.8rem; text-decoration: none; font-weight: 600; margin-left: 0.5rem;">Subir</a>
+            </div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: #f8fafc; border-radius: 12px;">
+            <div>
+                <p style="font-weight: 600; margin: 0;">RFC</p>
+                <p style="color: #6b7280; font-size: 0.8rem; margin: 0;">Registro Federal de Contribuyentes</p>
+            </div>
+            <div>
+                <span style="color: #6b7280; font-size: 0.8rem;">No subido</span>
+                <a href="#" style="background: #991547; color: white; padding: 0.3rem 1.2rem; border-radius: 8px; font-size: 0.8rem; text-decoration: none; font-weight: 600; margin-left: 0.5rem;">Subir</a>
+            </div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: #f8fafc; border-radius: 12px;">
+            <div>
+                <p style="font-weight: 600; margin: 0;">Carta compromiso</p>
+                <p style="color: #6b7280; font-size: 0.8rem; margin: 0;">Programas de capacitación</p>
+            </div>
+            <div>
+                <span style="color: #6b7280; font-size: 0.8rem;">No subido</span>
+                <a href="#" style="background: #991547; color: white; padding: 0.3rem 1.2rem; border-radius: 8px; font-size: 0.8rem; text-decoration: none; font-weight: 600; margin-left: 0.5rem;">Subir</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGO -->
+<div style="background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+    <h3 style="font-weight: 700; margin-bottom: 1rem;">💰 Pago de derechos</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; flex-wrap: wrap;">
+        <div>
+            <p style="color: #6b7280; font-size: 0.85rem;">Monto a pagar</p>
+            <p style="font-size: 1.8rem; font-weight: 800; color: #991547;">$679.00 MXN</p>
+            <p style="color: #6b7280; font-size: 0.8rem;">6.00 UMAS 2025 (UMA = $113.14)</p>
+        </div>
+        <div>
+            <p style="color: #6b7280; font-size: 0.85rem;">Método de pago</p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.3rem;">
+                <span style="background: #f1f5f9; padding: 0.3rem 0.8rem; border-radius: 8px; font-size: 0.8rem;">💳 En línea</span>
+                <span style="background: #f1f5f9; padding: 0.3rem 0.8rem; border-radius: 8px; font-size: 0.8rem;">🏦 En oficinas</span>
+            </div>
+            <p style="color: #6b7280; font-size: 0.8rem; margin-top: 0.5rem;">Pago en la Secretaría de Administración y Finanzas</p>
+        </div>
+    </div>
+    <div style="border-top: 1px solid #f1f5f9; padding-top: 1rem; margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="#" style="background: #991547; color: white; padding: 0.8rem 2rem; border-radius: 12px; font-weight: 700; text-decoration: none;">Generar línea de captura</a>
+        <span style="color: #6b7280; font-size: 0.85rem; display: flex; align-items: center;"><i class="fas fa-info-circle" style="margin-right: 0.3rem;"></i> Pagos en línea disponibles próximamente</span>
+    </div>
+</div>
+{% endblock %}

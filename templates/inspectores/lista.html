@@ -1,0 +1,115 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Inspectores - REDAIT{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem;">
+    <div style="text-align: center; margin-bottom: 3rem;">
+        <span style="display: inline-block; background: #991547; color: white; padding: 0.3rem 1.2rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Inspectores</span>
+        <h1 style="font-size: 2.8rem; font-weight: 800; color: #1f2937;">Cuerpo de Inspección</h1>
+        <p style="color: #6b7280; max-width: 700px; margin: 0.5rem auto 0 auto;">
+            Personal autorizado para realizar visitas de verificación y cumplimiento de la Ley de Operaciones Inmobiliarias del Estado de Tabasco
+        </p>
+    </div>
+
+    <!-- Introducción -->
+    <div style="background: #f8fafc; border-radius: 16px; padding: 2rem; margin-bottom: 2rem; border-left: 4px solid #991547;">
+        <p style="color: #4a5568; font-size: 1rem; margin: 0;">
+            <i class="fas fa-gavel" style="color: #991547; margin-right: 0.5rem;"></i>
+            Los siguientes inspectores están autorizados por la Secretaría de Turismo y Desarrollo Económico para realizar visitas de verificación a los operadores inmobiliarios, con el fin de garantizar el cumplimiento de la Ley de Operaciones Inmobiliarias del Estado de Tabasco y sus reglamentos.
+        </p>
+    </div>
+
+    <!-- Filtro de Municipio -->
+    <div style="max-width: 400px; margin: 0 auto 2rem auto;">
+        <form method="GET" style="display: flex; gap: 0.5rem;">
+            <select name="municipio" style="flex: 1; padding: 0.8rem 1.2rem; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 1rem; background: white; cursor: pointer;">
+                <option value="">Todos los municipios</option>
+                <option value="Centro">Centro</option>
+                <option value="Cárdenas">Cárdenas</option>
+                <option value="Comalcalco">Comalcalco</option>
+                <option value="Paraíso">Paraíso</option>
+                <option value="Macuspana">Macuspana</option>
+                <option value="Tenosique">Tenosique</option>
+            </select>
+            <button type="submit" style="background: #991547; color: white; padding: 0.8rem 1.5rem; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                <i class="fas fa-search"></i> Filtrar
+            </button>
+        </form>
+    </div>
+
+    <!-- Tabla de Inspectores -->
+    <div style="background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden;">
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: #991547; color: white;">
+                    <tr>
+                        <th style="padding: 1rem 1.5rem; text-align: left;">Nombre</th>
+                        <th style="padding: 1rem 1.5rem; text-align: left;">Cargo</th>
+                        <th style="padding: 1rem 1.5rem; text-align: left;">Municipio de adscripción</th>
+                        <th style="padding: 1rem 1.5rem; text-align: left;">Teléfono</th>
+                        <th style="padding: 1rem 1.5rem; text-align: center;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 1rem 1.5rem; font-weight: 600;">Lic. Ana Patricia Gómez López</td>
+                        <td style="padding: 1rem 1.5rem;">Inspectora Jefe</td>
+                        <td style="padding: 1rem 1.5rem;">Centro</td>
+                        <td style="padding: 1rem 1.5rem;">(993) 310-9750 ext. 48130</td>
+                        <td style="padding: 1rem 1.5rem; text-align: center;"><span style="background: #dcfce7; color: #16a34a; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Activo</span></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 1rem 1.5rem; font-weight: 600;">Mtro. Carlos Eduardo Sánchez Ruiz</td>
+                        <td style="padding: 1rem 1.5rem;">Inspector</td>
+                        <td style="padding: 1rem 1.5rem;">Comalcalco</td>
+                        <td style="padding: 1rem 1.5rem;">(993) 310-9750 ext. 48131</td>
+                        <td style="padding: 1rem 1.5rem; text-align: center;"><span style="background: #dcfce7; color: #16a34a; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Activo</span></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 1rem 1.5rem; font-weight: 600;">Lic. María Fernanda Mendoza González</td>
+                        <td style="padding: 1rem 1.5rem;">Inspectora</td>
+                        <td style="padding: 1rem 1.5rem;">Cárdenas</td>
+                        <td style="padding: 1rem 1.5rem;">(993) 310-9750 ext. 48132</td>
+                        <td style="padding: 1rem 1.5rem; text-align: center;"><span style="background: #dcfce7; color: #16a34a; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Activo</span></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 1rem 1.5rem; font-weight: 600;">Lic. José Antonio Pérez Hernández</td>
+                        <td style="padding: 1rem 1.5rem;">Inspector</td>
+                        <td style="padding: 1rem 1.5rem;">Paraíso</td>
+                        <td style="padding: 1rem 1.5rem;">(993) 310-9750 ext. 48133</td>
+                        <td style="padding: 1rem 1.5rem; text-align: center;"><span style="background: #dcfce7; color: #16a34a; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Activo</span></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 1rem 1.5rem; font-weight: 600;">Lic. Rosa Elena Narváez Trejo</td>
+                        <td style="padding: 1rem 1.5rem;">Inspectora</td>
+                        <td style="padding: 1rem 1.5rem;">Macuspana</td>
+                        <td style="padding: 1rem 1.5rem;">(993) 310-9750 ext. 48134</td>
+                        <td style="padding: 1rem 1.5rem; text-align: center;"><span style="background: #dcfce7; color: #16a34a; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Activo</span></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 1rem 1.5rem; font-weight: 600;">Mtro. Ricardo Méndez Rojas</td>
+                        <td style="padding: 1rem 1.5rem;">Inspector</td>
+                        <td style="padding: 1rem 1.5rem;">Tenosique</td>
+                        <td style="padding: 1rem 1.5rem;">(993) 310-9750 ext. 48135</td>
+                        <td style="padding: 1rem 1.5rem; text-align: center;"><span style="background: #dcfce7; color: #16a34a; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Activo</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Información de la Ley -->
+    <div style="margin-top: 2rem; background: #f8fafc; border-radius: 16px; padding: 2rem; border: 1px solid #f1f5f9;">
+        <h4 style="font-weight: 700; font-size: 1.1rem; color: #1f2937; margin-bottom: 0.5rem;">
+            <i class="fas fa-book-open" style="color: #991547; margin-right: 0.5rem;"></i> Fundamento Legal
+        </h4>
+        <ul style="color: #4a5568; font-size: 0.95rem; padding-left: 1.5rem; margin: 0;">
+            <li style="margin-bottom: 0.3rem;"><strong>Ley de Operaciones Inmobiliarias del Estado de Tabasco</strong> - Artículos 9, 10, 12 y 13</li>
+            <li style="margin-bottom: 0.3rem;"><strong>Reglamento de la Ley de Operaciones Inmobiliarias del Estado de Tabasco</strong> - Artículo 10</li>
+            <li>Los inspectores están facultados para realizar visitas de verificación, requerir documentación y aplicar sanciones en caso de incumplimiento.</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

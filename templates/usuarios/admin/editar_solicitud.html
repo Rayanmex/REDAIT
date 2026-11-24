@@ -1,0 +1,589 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Editar Solicitud {{ solicitud.folio }} - REDAIT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_panel.css' %}">
+<style>
+  .edit-section {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid #f1f5f9;
+  }
+  .edit-section h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #991547;
+    margin: 0 0 1rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 2px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .edit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 700px) {
+    .edit-grid { grid-template-columns: 1fr; }
+  }
+  .edit-field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 0.35rem;
+  }
+  .edit-field input,
+  .edit-field select,
+  .edit-field textarea {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: #1f2937;
+    background: white;
+    box-sizing: border-box;
+    transition: 0.2s ease;
+  }
+  .edit-field input:focus,
+  .edit-field select:focus,
+  .edit-field textarea:focus {
+    outline: none;
+    border-color: #991547;
+    box-shadow: 0 0 0 3px rgba(153,21,71,0.1);
+  }
+  .edit-field textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  .current-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: #166534;
+    background: #f0fdf4;
+    padding: 0.25rem 0.7rem;
+    border-radius: 50px;
+    margin-top: 0.4rem;
+  }
+  .current-file a {
+    color: #166534;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  .actions-bar {
+    position: sticky;
+    bottom: 20px;
+    background: white;
+    border-radius: 50px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1.5rem;
+    z-index: 100;
+  }
+  .actions-bar .save-btn {
+    background: linear-gradient(135deg, #991547 0%, #771139 100%);
+    color: white;
+    border: none;
+    padding: 0.9rem 2.5rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  .actions-bar .save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(153,21,71,0.3);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper">
+
+  <div class="admin-header">
+    <div>
+      <h1>Editar Solicitud {{ solicitud.folio }}</h1>
+      <p>{{ solicitud.ciudadano.nombre_completo }} · {{ solicitud.get_tipo_tramite_display }}</p>
+    </div>
+    <div class="admin-header-actions">
+      <a href="{% url 'usuarios:admin_detalle_solicitud' solicitud.id %}" class="btn-redait-outline">
+        <i class="fas fa-arrow-left"></i> Cancelar
+      </a>
+    </div>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}"
+           style="padding: 1rem 1.2rem; border-radius: 12px; margin-bottom: 1rem; font-size: 0.9rem;
+                  {% if message.tags == 'success' %}background: #f0fdf4; border: 1px solid #86efac; color: #166534;
+                  {% else %}background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b;{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {# ============================================================ #}
+    {# CIUDADANO                                                     #}
+    {# ============================================================ #}
+    <div class="edit-section">
+      <h3><i class="fas fa-user"></i> Ciudadano</h3>
+      <div class="edit-grid">
+        <div class="edit-field">
+          <label>Nombre completo</label>
+          <input type="text" name="nombre_completo"
+                 value="{{ solicitud.ciudadano.nombre_completo }}"
+                 style="text-transform: uppercase;">
+        </div>
+        <div class="edit-field">
+          <label>Empresa o corporativo</label>
+          <input type="text" name="empresa_nombre"
+                 list="listaEmpresas"
+                 placeholder="Ej: INMOBILIARIA DEL SURESTE S.A. DE C.V."
+                 style="text-transform: uppercase;"
+                 value="{{ solicitud.ciudadano.nombre_empresa_display|default:'' }}">
+          <datalist id="listaEmpresas">
+            {% for empresa in empresas %}
+              <option value="{{ empresa }}">
+            {% endfor %}
+          </datalist>
+          <p style="font-size: 0.75rem; color: #6b7280; margin: 0.3rem 0 0;">
+            <i class="fas fa-info-circle" style="color: #991547;"></i>
+            Déjalo vacío si es persona independiente.
+          </p>
+        </div>
+        <div class="edit-field">
+          <label>Teléfono</label>
+          <input type="tel" name="telefono" maxlength="10"
+                 value="{{ solicitud.ciudadano.telefono }}">
+        </div>
+        <div class="edit-field">
+          <label>Email (usuario)</label>
+          <input type="email" name="email"
+                 value="{{ solicitud.ciudadano.user.email }}">
+        </div>
+        
+                <div class="edit-field">
+          <label>
+            Folio de licencia
+            {% if not solicitud.ciudadano.activo %}
+              <span style="background: #fef2f2; color: #991b1b; padding: 0.15rem 0.6rem;
+                           border-radius: 50px; font-size: 0.7rem; font-weight: 700; margin-left: 0.4rem;">
+                CIUDADANO DESACTIVADO
+              </span>
+            {% endif %}
+          </label>
+          <input type="text" name="folio_licencia" id="inputFolioLicencia" maxlength="20"
+                 value="{{ solicitud.ciudadano.folio_licencia|default:'' }}"
+                 placeholder="Ej. 0001"
+                 list="foliosOcupados"
+                 autocomplete="off"
+                 style="text-transform: uppercase;">
+          <datalist id="foliosOcupados">
+            {% for f in folios_ocupados %}
+              <option value="{{ f }}">
+            {% endfor %}
+          </datalist>
+          <p style="font-size: 0.75rem; color: #6b7280; margin: 0.3rem 0 0;">
+            <i class="fas fa-info-circle"></i>
+            Número único del agente (sin AM-). No cambia en revalidaciones.
+            Déjalo vacío para liberar el folio actual.
+          </p>
+          <div id="avisoFolioOcupado"
+               style="display: none; background: #fef3c7; border-left: 4px solid #f59e0b;
+                      border-radius: 6px; padding: 0.7rem 0.9rem; margin-top: 0.6rem;">
+            <p style="margin: 0; font-size: 0.82rem; color: #92400e;">
+              <strong>⚠️ Este folio ya está asignado.</strong><br>
+              Al guardar se te pedirá elegir entre:
+            </p>
+            <ul style="margin: 0.4rem 0 0 1rem; padding: 0; font-size: 0.8rem; color: #92400e;">
+              <li><strong>Desactivar</strong> al ciudadano actual y liberar su folio.</li>
+              <li><strong>Reasignar</strong> un folio nuevo al ciudadano actual.</li>
+            </ul>
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+
+    {# ============================================================ #}
+    {# DATOS PERSONALES                                              #}
+    {# ============================================================ #}
+    <div class="edit-section">
+      <h3><i class="fas fa-id-card"></i> Datos personales</h3>
+      <div class="edit-grid">
+        <div class="edit-field">
+          <label>Régimen fiscal</label>
+          <select name="regimen_fiscal">
+            {% for val, etiq in regimenes %}
+              <option value="{{ val }}" {% if datos_personales.regimen_fiscal == val %}selected{% endif %}>{{ etiq }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>Sexo</label>
+          <select name="sexo">
+            {% for val, etiq in sexos %}
+              <option value="{{ val }}" {% if datos_personales.sexo == val %}selected{% endif %}>{{ etiq }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>RFC</label>
+          <input type="text" name="rfc" maxlength="13"
+                 value="{{ datos_personales.rfc }}"
+                 style="text-transform: uppercase;">
+        </div>
+        <div class="edit-field">
+          <label>CURP</label>
+          <input type="text" name="curp" maxlength="18"
+                 value="{{ datos_personales.curp }}"
+                 style="text-transform: uppercase;">
+        </div>
+        <div class="edit-field">
+          <label>Tipo de trámite</label>
+          <select name="tipo_tramite">
+            {% for val, etiq in tipos %}
+              <option value="{{ val }}" {% if datos_personales.tipo_tramite == val %}selected{% endif %}>{{ etiq }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    {# ============================================================ #}
+    {# DOMICILIO                                                     #}
+    {# ============================================================ #}
+    <div class="edit-section">
+      <h3><i class="fas fa-home"></i> Domicilio</h3>
+      <div class="edit-grid">
+        <div class="edit-field">
+          <label>Municipio</label>
+          <select name="municipio">
+            <option value="">— Sin especificar —</option>
+            {% for val, etiq in municipios %}
+              <option value="{{ val }}" {% if domicilio.municipio == val %}selected{% endif %}>{{ etiq }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>Dirección</label>
+          <input type="text" name="calle_numero_colonia_cp"
+                 value="{{ domicilio.calle_numero_colonia_cp }}"
+                 style="text-transform: uppercase;">
+        </div>
+      </div>
+      <div class="edit-grid" style="margin-top: 1rem;">
+        <div class="edit-field">
+          <label>Comprobante de domicilio</label>
+          <input type="file" name="comprobante_domicilio" accept=".pdf">
+          {% if domicilio.comprobante_domicilio %}
+            <span class="current-file">
+              <i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ domicilio.comprobante_domicilio.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+        <div class="edit-field">
+          <label>Identificación oficial</label>
+          <input type="file" name="identificacion_oficial" accept=".pdf">
+          {% if domicilio.identificacion_oficial %}
+            <span class="current-file">
+              <i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ domicilio.identificacion_oficial.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+        <div class="edit-field">
+          <label>Foto del agente</label>
+          <input type="file" name="foto_agente" accept="image/jpeg,image/png">
+          {% if domicilio.foto_agente %}
+            <span class="current-file">
+              <i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ domicilio.foto_agente.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {# ============================================================ #}
+    {# DOCUMENTOS DEL NEGOCIO                                        #}
+    {# ============================================================ #}
+    <div class="edit-section">
+      <h3><i class="fas fa-briefcase"></i> Documentos del negocio</h3>
+      <div class="edit-grid">
+        <div class="edit-field">
+          <label>Constancia situación fiscal</label>
+          <input type="file" name="constancia_situacion_fiscal" accept=".pdf">
+          {% if documentos.constancia_situacion_fiscal %}
+            <span class="current-file"><i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ documentos.constancia_situacion_fiscal.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+        <div class="edit-field">
+          <label>Constancia PROFECO</label>
+          <input type="file" name="constancia_profeco" accept=".pdf">
+          {% if documentos.constancia_profeco %}
+            <span class="current-file"><i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ documentos.constancia_profeco.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+        <div class="edit-field">
+          <label>Carta no antecedentes</label>
+          <input type="file" name="carta_no_antecedentes" accept=".pdf">
+          {% if documentos.carta_no_antecedentes %}
+            <span class="current-file"><i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ documentos.carta_no_antecedentes.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+        <div class="edit-field">
+          <label>Carta bajo protesta</label>
+          <input type="file" name="carta_bajo_protesta" accept=".pdf">
+          {% if documentos.carta_bajo_protesta %}
+            <span class="current-file"><i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ documentos.carta_bajo_protesta.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+        <div class="edit-field">
+          <label>Acta constitutiva</label>
+          <input type="file" name="acta_constitutiva" accept=".pdf">
+          {% if documentos.acta_constitutiva %}
+            <span class="current-file"><i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ documentos.acta_constitutiva.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+        <div class="edit-field">
+          <label>Poder notarial</label>
+          <input type="file" name="poder_notarial" accept=".pdf">
+          {% if documentos.poder_notarial %}
+            <span class="current-file"><i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ documentos.poder_notarial.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+        <div class="edit-field">
+          <label>Logotipo empresa</label>
+          <input type="file" name="logotipo_empresa" accept="image/png,image/jpeg">
+          {% if documentos.logotipo_empresa %}
+            <span class="current-file"><i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ documentos.logotipo_empresa.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+        <div class="edit-field">
+          <label>Constancia inscripción anterior</label>
+          <input type="file" name="constancia_inscripcion_anterior" accept=".pdf">
+          {% if documentos.constancia_inscripcion_anterior %}
+            <span class="current-file"><i class="fas fa-check-circle"></i> Actual —
+              <a href="{{ documentos.constancia_inscripcion_anterior.url }}" target="_blank">Ver</a>
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {# ============================================================ #}
+    {# CURSOS                                                        #}
+    {# ============================================================ #}
+    <div class="edit-section">
+      <h3><i class="fas fa-graduation-cap"></i> Cursos y capacitaciones</h3>
+
+      {% if solicitud.cursos_cargados.exists %}
+        <div style="background: {% if solicitud.cumple_minimo_horas %}#f0fdf4{% else %}#fef3c7{% endif %};
+                    border: 1px solid {% if solicitud.cumple_minimo_horas %}#86efac{% else %}#fcd34d{% endif %};
+                    border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 1rem; font-size: 0.85rem;
+                    color: {% if solicitud.cumple_minimo_horas %}#166534{% else %}#92400e{% endif %};">
+          <strong>{{ solicitud.total_horas_curso }}h acumuladas</strong> en
+          {{ solicitud.total_documentos_curso }} curso{{ solicitud.total_documentos_curso|pluralize }}.
+          {% if not solicitud.cumple_minimo_horas %}
+            Faltan {{ 30|add:"-"|add:solicitud.total_horas_curso }}h para el mínimo.
+          {% endif %}
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem;">
+          {% for c in solicitud.cursos_cargados.all %}
+            <div style="background: #fafbfc; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.7rem 1rem; display: flex; justify-content: space-between; align-items: start; gap: 0.8rem; flex-wrap: wrap;">
+              <div style="flex: 1;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+                  <span style="background: #991547; color: white; padding: 0.15rem 0.6rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700;">
+                    {{ c.horas }}h
+                  </span>
+                  <strong style="font-size: 0.9rem;">{{ c.nombre }}</strong>
+                </div>
+                <div style="font-size: 0.78rem; color: #6b7280;">
+                  {% if c.institucion %}{{ c.institucion }}{% endif %}
+                  {% if c.fecha_curso %}{% if c.institucion %} · {% endif %}{{ c.fecha_curso|date:"d/m/Y" }}{% endif %}
+                </div>
+              </div>
+              {% if c.documento %}
+                <a href="{{ c.documento.url }}" target="_blank"
+                   style="color: #991547; font-size: 0.8rem; font-weight: 600; text-decoration: none;">
+                  <i class="fas fa-file-pdf"></i> Ver
+                </a>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 1rem;">
+          El ciudadano no ha cargado cursos aún.
+        </p>
+      {% endif %}
+
+      <div class="edit-field">
+        <label>Carta de compromiso</label>
+        <input type="file" name="carta_compromiso" accept=".pdf">
+        {% if cursos.carta_compromiso %}
+          <span class="current-file"><i class="fas fa-check-circle"></i> Actual —
+            <a href="{{ cursos.carta_compromiso.url }}" target="_blank">Ver</a>
+          </span>
+        {% endif %}
+      </div>
+    </div>
+
+    {# ============================================================ #}
+    {# CONTROL DE LA SOLICITUD                                       #}
+    {# ============================================================ #}
+    <div class="edit-section">
+      <h3><i class="fas fa-file-alt"></i> Control de la solicitud</h3>
+      <div class="edit-grid">
+        <div class="edit-field">
+          <label>Estado</label>
+          <select name="estado">
+            {% for val, etiq in estados %}
+              <option value="{{ val }}" {% if solicitud.estado == val %}selected{% endif %}>{{ etiq }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>Motivo de acción (si requiere acción)</label>
+          <select name="motivo_accion">
+            <option value="">— Sin motivo —</option>
+            {% for val, etiq in motivos_accion %}
+              <option value="{{ val }}" {% if solicitud.motivo_accion == val %}selected{% endif %}>{{ etiq }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>Sub-estado de pago</label>
+          <select name="pago_estado">
+            {% for val, etiq in pago_estados %}
+              <option value="{{ val }}" {% if solicitud.pago_estado == val %}selected{% endif %}>{{ etiq }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>Folio solicitud (AM-XXXX)</label>
+          <input type="text" name="folio" value="{{ solicitud.folio|default:'' }}"
+                 style="text-transform: uppercase;" placeholder="AM-0001">
+        </div>
+        <div class="edit-field">
+          <label>Número de oficio</label>
+          <input type="text" name="numero_oficio" value="{{ solicitud.numero_oficio }}"
+                 placeholder="TURISMO/DDC/0001/2026">
+        </div>
+        <div class="edit-field">
+          <label>Fecha alta padrón</label>
+          <input type="date" name="fecha_alta_padron"
+                 value="{{ solicitud.fecha_alta_padron|date:'Y-m-d'|default:'' }}">
+        </div>
+        <div class="edit-field">
+          <label>Fecha vigencia padrón</label>
+          <input type="date" name="fecha_vigencia_padron"
+                 value="{{ solicitud.fecha_vigencia_padron|date:'Y-m-d'|default:'' }}">
+        </div>
+      </div>
+      <div class="edit-field" style="margin-top: 1rem;">
+        <label>Comentario del admin (visible para el ciudadano)</label>
+        <textarea name="comentario_admin">{{ solicitud.comentario_admin }}</textarea>
+      </div>
+    </div>
+
+    {# BARRA DE ACCIONES #}
+    <div class="actions-bar">
+      <a href="{% url 'usuarios:admin_detalle_solicitud' solicitud.id %}"
+         class="btn-redait-outline">
+        Cancelar
+      </a>
+      <button type="submit" class="save-btn">
+        <i class="fas fa-save"></i> Guardar cambios
+      </button>
+    </div>
+
+  </form>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mayúsculas automáticas
+    ['nombre_completo', 'empresa_nombre', 'rfc', 'curp', 'folio', 'folio_licencia'].forEach(function(name) {
+      var el = document.querySelector('input[name="' + name + '"]');
+      if (el) {
+        el.addEventListener('input', function() {
+          this.value = this.value.toUpperCase();
+        });
+      }
+    });
+  });
+</script>
+<script>
+  // Detección de conflicto de folio en tiempo real
+  document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('inputFolioLicencia');
+    var aviso = document.getElementById('avisoFolioOcupado');
+    if (!input || !aviso) return;
+
+    // Lista de folios ocupados (desde Django)
+    var foliosOcupados = [
+      {% for f in folios_ocupados %}"{{ f|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}
+    ];
+    var folioActual = "{{ solicitud.ciudadano.folio_licencia|default:''|escapejs }}";
+
+    function verificarFolio() {
+      var valor = (input.value || '').trim().toUpperCase();
+      // Si está vacío o es el folio actual, no avisar
+      if (!valor || valor === folioActual) {
+        aviso.style.display = 'none';
+        return;
+      }
+      if (foliosOcupados.indexOf(valor) !== -1) {
+        aviso.style.display = 'block';
+      } else {
+        aviso.style.display = 'none';
+      }
+    }
+
+    input.addEventListener('input', verificarFolio);
+    verificarFolio();
+  });
+</script>
+
+{% endblock %}

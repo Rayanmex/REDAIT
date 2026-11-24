@@ -1,0 +1,848 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Padrón de Operadores Inmobiliarios - REDAIT{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ============================================ */
+  /* PADRÓN DE OPERADORES                          */
+  /* ============================================ */
+
+  .padron-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+  }
+
+  .padron-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+  }
+
+  .padron-header .tag {
+      display: inline-block;
+      background: var(--primary);
+      color: var(--white);
+      padding: 0.3rem 1.2rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.6rem;
+  }
+
+  .padron-header h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+  }
+
+  .padron-header p {
+      color: var(--text-gray);
+      max-width: 700px;
+      margin: 0 auto;
+  }
+
+  /* Filtros */
+  .padron-filtros {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+  }
+
+  .padron-filtros-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      align-items: end;
+  }
+
+  .padron-filtros-grid label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 0.4rem;
+  }
+
+  .padron-filtros-grid input,
+  .padron-filtros-grid select {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: var(--text-dark);
+      background: var(--white);
+      box-sizing: border-box;
+      transition: var(--transition);
+  }
+
+  .padron-filtros-grid input:focus,
+  .padron-filtros-grid select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(153,21,71,0.1);
+  }
+
+  .padron-filtros-botones {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+  }
+
+  /* ============================================ */
+  /* BOTONES DE TIPO (FÍSICA / MORAL)              */
+  /* ============================================ */
+  .padron-tipo-botones {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+  }
+
+  .tipo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.7rem 1.4rem;
+      border-radius: 50px;
+      background: white;
+      border: 2px solid #e5e7eb;
+      color: var(--text-dark);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .tipo-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      border-color: var(--primary);
+      color: var(--text-dark);
+  }
+
+  .tipo-btn i {
+      font-size: 0.95rem;
+      color: var(--primary);
+  }
+
+  .tipo-btn-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 22px;
+      padding: 0 0.5rem;
+      border-radius: 50px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 0.72rem;
+      font-weight: 800;
+  }
+
+  /* Activo: Todos (rojo institucional) */
+  .tipo-btn.activo {
+      background: linear-gradient(135deg, #991547 0%, #771139 100%);
+      border-color: #991547;
+      color: white;
+      box-shadow: 0 6px 20px rgba(153,21,71,0.3);
+  }
+
+  .tipo-btn.activo i { color: white; }
+  .tipo-btn.activo .tipo-btn-count {
+      background: rgba(255,255,255,0.25);
+      color: white;
+  }
+
+  /* Activo: Física */
+  .tipo-btn-fisica.activo {
+      background: var(--gradiente-secundario);
+      border-color: var(--primary);
+      color: white;
+  }
+
+  .tipo-btn-fisica.activo i { color: white; }
+  .tipo-btn-fisica.activo .tipo-btn-count {
+      background: rgba(255,255,255,0.25);
+      color: white;
+  }
+
+  /* Activo: Moral/Empresa (dorado) */
+  .tipo-btn-moral.activo {
+      background: linear-gradient(135deg, #C49955 0%, #a67c3f 100%);
+      border-color: var(--secondary);
+      color: white;
+      box-shadow: 0 6px 20px rgba(196,153,85,0.35);
+  }
+
+  .tipo-btn-moral.activo i { color: white; }
+  .tipo-btn-moral.activo .tipo-btn-count {
+      background: rgba(255,255,255,0.25);
+      color: white;
+  }
+
+  /* Grupos de empresa */
+  .empresa-grupo {
+      margin-bottom: 3rem;
+  }
+
+  .empresa-grupo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(90deg, rgba(196,153,85,0.15) 0%, rgba(153,21,71,0.08) 100%);
+      border-radius: 14px;
+      border-left: 5px solid var(--secondary);
+      margin-bottom: 1.5rem;
+  }
+
+  .empresa-grupo-header h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+  }
+
+  .empresa-grupo-header .stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.82rem;
+      color: var(--text-gray);
+      flex-wrap: wrap;
+  }
+
+  .empresa-grupo-header .stats strong {
+      color: var(--primary);
+      font-weight: 700;
+  }
+
+  .empresa-grupo.independientes .empresa-grupo-header {
+      background: #f8fafc;
+      border-left-color: #94a3b8;
+  }
+
+  .empresa-grupo.independientes .empresa-grupo-header h2 {
+      color: #475569;
+  }
+
+  /* Grid de tarjetas */
+  .padron-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+  }
+
+  .agente-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+      border: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+  }
+
+  /* Persona Física */
+  .agente-card.card-fisica .agente-card-header {
+      background: var(--gradiente-secundario);
+  }
+
+  /* Persona Moral/Empresa - FONDO DORADO */
+  .agente-card.card-moral {
+      border: 2px solid var(--secondary);
+      background: linear-gradient(180deg, #FBF6EC 0%, #ffffff 70%);
+  }
+
+  .agente-card.card-moral .agente-card-header {
+      background: linear-gradient(135deg, #C49955 0%, #DDC9A3 100%);
+  }
+
+  .agente-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+  }
+
+  .agente-card-header {
+      height: 90px;
+      position: relative;
+  }
+
+  .agente-foto-wrapper {
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--white);
+      padding: 4px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  }
+
+  .agente-foto {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+  }
+
+  .agente-foto-placeholder {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--text-light);
+  }
+
+  .badge-tipo {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 0.25rem 0.7rem;
+      border-radius: 50px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(255,255,255,0.95);
+  }
+
+  .badge-tipo.moral { color: #7a5c1e; }
+  .badge-tipo.empresa { color: #7a5c1e; }
+
+  .agente-card-body {
+      padding: 60px 1.5rem 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+  }
+
+  .agente-card-body h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      text-align: center;
+      margin: 0 0 0.8rem;
+      line-height: 1.3;
+      min-height: 2.6rem;
+  }
+
+  .agente-card.card-moral .agente-card-body h3 {
+      color: #4a3a1a;
+  }
+
+  .agente-licencia {
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.1rem;
+      padding: 0.5rem;
+      background: #fef7fa;
+      border-radius: 8px;
+      margin-bottom: 0.8rem;
+  }
+
+  .agente-card.card-moral .agente-licencia {
+      background: rgba(255, 255, 255, 0.75);
+      color: #7a5c1e;
+  }
+
+  .agente-horas {
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #166534;
+      background: #f0fdf4;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+  }
+
+  .agente-card.card-moral .agente-horas {
+      background: rgba(255, 255, 255, 0.75);
+      color: #166534;
+  }
+
+  .agente-info {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      flex: 1;
+  }
+
+  .agente-card.card-moral .agente-info {
+      color: #4a3a1a;
+  }
+
+  .agente-info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.3rem 0;
+      border-bottom: 1px dashed #f1f5f9;
+  }
+
+  .agente-card.card-moral .agente-info-row {
+      border-bottom-color: rgba(196, 153, 85, 0.3);
+  }
+
+  .agente-info-row:last-child {
+      border-bottom: none;
+  }
+
+  .agente-info-row strong {
+      color: #4b5563;
+      font-weight: 600;
+  }
+
+  .agente-card.card-moral .agente-info-row strong {
+      color: #7a5c1e;
+  }
+
+  .agente-acciones {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: auto;
+  }
+
+  .btn-qr {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      background: var(--gradiente-secundario);
+      color: var(--white);
+      padding: 0.6rem 1rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: var(--transition);
+  }
+
+  .agente-card.card-moral .btn-qr {
+      background: linear-gradient(135deg, #C49955 0%, #a67c3f 100%);
+  }
+
+  .btn-qr:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(153,21,71,0.3);
+      color: var(--white);
+  }
+
+  /* Estado vacío */
+  .padron-empty {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-gray);
+  }
+
+  .padron-empty i {
+      font-size: 3rem;
+      color: #d1d5db;
+      margin-bottom: 1rem;
+  }
+
+  /* Modal de foto */
+  .foto-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+  }
+
+  .foto-modal.active {
+      display: flex;
+  }
+
+  .foto-modal img {
+      max-width: 90%;
+      max-height: 90vh;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .foto-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      background: var(--white);
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  /* Responsive */
+  @media (max-width: 1000px) {
+      .padron-grid {
+          grid-template-columns: repeat(2, 1fr);
+      }
+  }
+
+  @media (max-width: 640px) {
+      .padron-header h1 { font-size: 1.8rem; }
+      .padron-filtros-grid { grid-template-columns: 1fr; }
+      .padron-grid { grid-template-columns: 1fr; }
+      .empresa-grupo-header {
+          flex-direction: column;
+          align-items: flex-start;
+      }
+      .padron-tipo-botones {
+          flex-direction: column;
+          align-items: stretch;
+      }
+      .tipo-btn {
+          justify-content: space-between;
+      }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="padron-wrapper">
+
+  <div class="padron-header">
+    <span class="tag">Padrón Oficial</span>
+    <h1>Operadores Inmobiliarios Certificados</h1>
+    <p>
+      Personas y empresas autorizadas por la Secretaría de Turismo para realizar
+      operaciones inmobiliarias en el estado de Tabasco.
+    </p>
+  </div>
+
+  <!-- Filtros -->
+  <form method="GET" class="padron-filtros">
+    <div class="padron-filtros-grid">
+      <div>
+        <label for="q">Buscar por nombre</label>
+        <input type="text" name="q" id="q" value="{{ busqueda }}" placeholder="Ej: JUAN PÉREZ">
+      </div>
+
+      <div>
+        <label for="empresa">Empresa</label>
+        <select name="empresa" id="empresa">
+          <option value="">Todas las empresas</option>
+          {% for e in empresas %}
+            <option value="{{ e }}" {% if empresa_filtro == e %}selected{% endif %}>{{ e }}</option>
+          {% endfor %}
+          <option value="__sin_empresa__" {% if empresa_filtro == '__sin_empresa__' %}selected{% endif %}>
+            Personas independientes
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label for="municipio">Municipio</label>
+        <select name="municipio" id="municipio">
+          <option value="">Todos los municipios</option>
+          {% for valor, etiqueta in municipios %}
+            <option value="{{ valor }}" {% if municipio_filtro == valor %}selected{% endif %}>{{ etiqueta }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label for="horas">Horas de capacitación</label>
+        <select name="horas" id="horas">
+          {% for valor, etiqueta in rangos_horas %}
+            <option value="{{ valor }}" {% if horas_filtro == valor %}selected{% endif %}>{{ etiqueta }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label for="orden">Ordenar por</label>
+        <select name="orden" id="orden">
+          <option value="alfabetico" {% if orden == 'alfabetico' %}selected{% endif %}>Alfabético (A-Z)</option>
+          <option value="horas" {% if orden == 'horas' %}selected{% endif %}>Más horas de capacitación</option>
+        </select>
+      </div>
+    </div>
+
+    {# Preservar el filtro de tipo al enviar el form #}
+    {% if tipo_filtro %}
+      <input type="hidden" name="tipo" value="{{ tipo_filtro }}">
+    {% endif %}
+
+    <div class="padron-filtros-botones">
+      <button type="submit" class="btn-redait">
+        <i class="fas fa-search"></i> Buscar
+      </button>
+      <a href="{% url 'padron:lista' %}" class="btn-redait-outline">
+        <i class="fas fa-times"></i> Limpiar
+      </a>
+    </div>
+  </form>
+
+  <!-- Botones de tipo -->
+  <div class="padron-tipo-botones">
+    <a href="?{% for k, v in request.GET.items %}{% if k != 'tipo' and k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}"
+       class="tipo-btn {% if not tipo_filtro %}activo{% endif %}">
+      <i class="fas fa-users"></i>
+      <span>Todos</span>
+      <span class="tipo-btn-count">{{ total_todos }}</span>
+    </a>
+
+    <a href="?{% for k, v in request.GET.items %}{% if k != 'tipo' and k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}tipo=fisica"
+       class="tipo-btn tipo-btn-fisica {% if tipo_filtro == 'fisica' %}activo{% endif %}">
+      <i class="fas fa-user"></i>
+      <span>Persona Física</span>
+      <span class="tipo-btn-count">{{ total_fisicas_filtro }}</span>
+    </a>
+
+    <a href="?{% for k, v in request.GET.items %}{% if k != 'tipo' and k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}tipo=moral"
+       class="tipo-btn tipo-btn-moral {% if tipo_filtro == 'moral' %}activo{% endif %}">
+      <i class="fas fa-building"></i>
+      <span>Persona Moral / Empresa</span>
+      <span class="tipo-btn-count">{{ total_morales_filtro }}</span>
+    </a>
+  </div>
+
+  <!-- Resultados -->
+  <div style="text-align: center; margin-bottom: 2rem; color: var(--text-gray); font-size: 0.9rem;">
+    <strong>{{ total }}</strong> operador{{ total|pluralize:"es" }} encontrado{{ total|pluralize }}
+  </div>
+
+  {% if grupos %}
+    {% for grupo in grupos %}
+      <div class="empresa-grupo {% if not grupo.empresa %}independientes{% endif %}">
+
+        <div class="empresa-grupo-header">
+          <h2>
+            {% if grupo.empresa %}
+              <i class="fas fa-building"></i>
+            {% else %}
+              <i class="fas fa-user"></i>
+            {% endif %}
+            {{ grupo.nombre }}
+          </h2>
+          <div class="stats">
+            <span><strong>{{ grupo.total_agentes }}</strong> agente{{ grupo.total_agentes|pluralize }}</span>
+            {% if grupo.total_horas > 0 %}
+              <span>· <strong>{{ grupo.total_horas }}h</strong> acumuladas</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="padron-grid">
+          {% for s in grupo.agentes %}
+            {% if s.datos_personales.regimen_fiscal == 'pm' or s.ciudadano.empresa %}
+              {# ============ TARJETA MORAL / EMPRESA ============ #}
+              <div class="agente-card card-moral">
+                <div class="agente-card-header">
+                  {% if s.datos_personales.regimen_fiscal == 'pm' %}
+                    <span class="badge-tipo moral">Persona Moral</span>
+                  {% elif s.ciudadano.empresa %}
+                    <span class="badge-tipo empresa">Empresa</span>
+                  {% endif %}
+
+                  <div class="agente-foto-wrapper">
+                    {% if s.domicilio_identificacion and s.domicilio_identificacion.foto_agente %}
+                      <img src="{{ s.domicilio_identificacion.foto_agente.url }}"
+                           alt="{{ s.ciudadano.nombre_completo }}"
+                           class="agente-foto"
+                           onclick="abrirFoto('{{ s.domicilio_identificacion.foto_agente.url }}')">
+                    {% else %}
+                      <div class="agente-foto-placeholder">
+                        <i class="fas fa-building"></i>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="agente-card-body">
+                  <h3>{{ s.ciudadano.nombre_completo }}</h3>
+                  <div class="agente-licencia">AM-{{ s.ciudadano.folio_licencia }}</div>
+
+                  {% if s.horas_curso and s.horas_curso > 0 %}
+                    <div class="agente-horas">
+                      <i class="fas fa-graduation-cap"></i>
+                      {{ s.horas_curso }} horas de capacitación
+                    </div>
+                  {% else %}
+                    <div class="agente-horas">
+                      <i class="fas fa-graduation-cap"></i>
+                      30 horas de capacitación
+                    </div>
+                  {% endif %}
+
+                  <div class="agente-info">
+                    <div class="agente-info-row">
+                      <strong>Tipo</strong>
+                      <span>
+                        {% if s.datos_personales.regimen_fiscal == 'pm' %}
+                          Persona Moral
+                        {% else %}
+                          Persona Física
+                        {% endif %}
+                      </span>
+                    </div>
+                    {% if s.ciudadano.empresa %}
+                      <div class="agente-info-row">
+                        <strong>Empresa</strong>
+                        <span style="color: #7a5c1e; font-weight: 600;">{{ s.ciudadano.empresa.nombre|truncatechars:30 }}</span>
+                      </div>
+                    {% endif %}
+                    <div class="agente-info-row">
+                      <strong>Alta</strong>
+                      <span>{{ s.fecha_alta_padron|date:"d/m/Y"|default:"—" }}</span>
+                    </div>
+                    <div class="agente-info-row">
+                      <strong>Vigencia</strong>
+                      <span>{{ s.fecha_vigencia_padron|date:"d/m/Y"|default:"—" }}</span>
+                    </div>
+                  </div>
+
+                  <div class="agente-acciones">
+                    <a href="{% url 'usuarios:verificar_licencia' s.ciudadano.folio_licencia %}"
+                       class="btn-qr" target="_blank">
+                      <i class="fas fa-qrcode"></i> Verificar
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+            {% else %}
+              {# ============ TARJETA FÍSICA ============ #}
+              <div class="agente-card card-fisica">
+                <div class="agente-card-header">
+                  <div class="agente-foto-wrapper">
+                    {% if s.domicilio_identificacion and s.domicilio_identificacion.foto_agente %}
+                      <img src="{{ s.domicilio_identificacion.foto_agente.url }}"
+                           alt="{{ s.ciudadano.nombre_completo }}"
+                           class="agente-foto"
+                           onclick="abrirFoto('{{ s.domicilio_identificacion.foto_agente.url }}')">
+                    {% else %}
+                      <div class="agente-foto-placeholder">
+                        <i class="fas fa-user"></i>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="agente-card-body">
+                  <h3>{{ s.ciudadano.nombre_completo }}</h3>
+                  <div class="agente-licencia">AM-{{ s.ciudadano.folio_licencia }}</div>
+
+                  {% if s.horas_curso and s.horas_curso > 0 %}
+                    <div class="agente-horas">
+                      <i class="fas fa-graduation-cap"></i>
+                      {{ s.horas_curso }} horas de capacitación
+                    </div>
+                  {% else %}
+                    <div class="agente-horas">
+                      <i class="fas fa-graduation-cap"></i>
+                      30 horas de capacitación
+                    </div>
+                  {% endif %}
+
+                  <div class="agente-info">
+                    <div class="agente-info-row">
+                      <strong>Tipo</strong>
+                      <span>Persona Física</span>
+                    </div>
+                    <div class="agente-info-row">
+                      <strong>Alta</strong>
+                      <span>{{ s.fecha_alta_padron|date:"d/m/Y"|default:"—" }}</span>
+                    </div>
+                    <div class="agente-info-row">
+                      <strong>Vigencia</strong>
+                      <span>{{ s.fecha_vigencia_padron|date:"d/m/Y"|default:"—" }}</span>
+                    </div>
+                  </div>
+
+                  <div class="agente-acciones">
+                    <a href="{% url 'usuarios:verificar_licencia' s.ciudadano.folio_licencia %}"
+                       class="btn-qr" target="_blank">
+                      <i class="fas fa-qrcode"></i> Verificar
+                    </a>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="padron-empty">
+      <i class="fas fa-search"></i>
+      <h3 style="font-weight: 700; color: var(--text-dark);">No se encontraron operadores</h3>
+      <p>Intenta con otro filtro o búsqueda.</p>
+    </div>
+  {% endif %}
+
+  <p style="text-align: center; color: var(--text-gray); font-size: 0.85rem; margin-top: 2rem;">
+    <i class="fas fa-info-circle"></i>
+    Padrón actualizado al {{ fecha_actualizacion|date:"d/m/Y" }}.
+  </p>
+
+</div>
+
+<!-- Modal para foto grande -->
+<div id="fotoModal" class="foto-modal" onclick="cerrarFoto()">
+  <button class="foto-modal-close" onclick="cerrarFoto()" aria-label="Cerrar">
+    <i class="fas fa-times"></i>
+  </button>
+  <img id="fotoModalImg" src="" alt="">
+</div>
+
+<script>
+  function abrirFoto(url) {
+    document.getElementById('fotoModalImg').src = url;
+    document.getElementById('fotoModal').classList.add('active');
+  }
+  function cerrarFoto() {
+    document.getElementById('fotoModal').classList.remove('active');
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') cerrarFoto();
+  });
+</script>
+{% endblock %}

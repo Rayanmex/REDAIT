@@ -1,0 +1,33 @@
+{% extends 'usuarios/emails/base_email.html' %}
+
+{% block contenido %}
+<h2 style="color:#991b1b; margin:0 0 15px; font-size:20px;">Comprobante rechazado</h2>
+
+<p style="font-size:15px; line-height:1.6;">Estimado(a) <strong>{{ ciudadano.nombre_completo }}</strong>,</p>
+
+<p style="font-size:15px; line-height:1.6;">
+  Lamentamos informarte que tu comprobante de pago para la solicitud
+  <strong>{{ solicitud.folio }}</strong> ha sido <strong style="color:#991b1b;">RECHAZADO</strong>.
+</p>
+
+{% if comentario %}
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#fef2f2; border-left:4px solid #991b1b; border-radius:8px; margin:20px 0;">
+  <tr>
+    <td style="padding:15px 20px;">
+      <p style="margin:0 0 5px; font-size:12px; color:#6b7280; text-transform:uppercase; letter-spacing:1px;">Motivo</p>
+      <p style="margin:0; font-size:14px; color:#1f2937; line-height:1.6;">{{ comentario }}</p>
+    </td>
+  </tr>
+</table>
+{% endif %}
+
+<p style="font-size:15px; line-height:1.6;">
+  Puedes volver a subir tu comprobante corrigiendo lo indicado.
+</p>
+
+<p style="text-align:center; margin:25px 0;">
+  <a href="{{ site_url }}/usuarios/subir-comprobante/" style="display:inline-block; background: linear-gradient(135deg,#991547 0%,#4a0a22 100%); color:#fff; text-decoration:none; padding:12px 30px; border-radius:50px; font-weight:700; font-size:14px;">
+    Volver a subir comprobante
+  </a>
+</p>
+{% endblock %}

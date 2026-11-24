@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pase de Caja</title>
+  <style>
+    @page {
+      size: Letter;
+      margin: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', 'Helvetica', sans-serif;
+      font-size: 10pt;
+      color: #000;
+      line-height: 1.2;
+    }
+
+    .pagina {
+      position: relative;
+      width: 21.59cm;
+      height: 27.94cm;
+      background-image: url("{{ fondo_url }}");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .contenido {
+      position: absolute;
+      top: 5.8cm;
+      left: 2.7cm;
+      right: 2.5cm;
+    }
+
+    /* Fecha + Oficio + Asunto (bloque compacto) */
+    .encabezado-oficio {
+      margin-bottom: 10pt;
+    }
+
+    .encabezado-oficio p {
+      font-size: 12pt;
+      margin: 0;
+      padding: 0;
+      line-height: 1.15;
+    }
+
+    .fecha {
+      text-align: right;
+    }
+
+    .oficio {
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .asunto {
+      font-weight: bold;
+      text-align: right;
+    }
+
+    /* Destinatario */
+    .destinatario {
+      margin-bottom: 12pt;
+    }
+
+    .destinatario p {
+      font-size: 12pt;
+      margin: 0;
+      padding: 0;
+      line-height: 1.15;
+    }
+
+    .destinatario .nombre {
+      font-weight: bold;
+    }
+
+    /* Cuerpo */
+    .cuerpo {
+      text-align: justify;
+      font-size: 12pt;
+      line-height: 1.3;
+      margin-bottom: 8pt;
+    }
+
+    /* Nombre del ciudadano (destacado pero no gigante) */
+    .nombre-ciudadano {
+      text-align: center;
+      font-weight: bold;
+      font-size: 12pt;
+      margin: 8pt 0;
+    }
+
+    .cierre {
+      text-align: justify;
+      font-size: 12pt;
+      line-height: 1.3;
+      margin-bottom: 12pt;
+    }
+
+    /* Firma */
+    .atentamente {
+      text-align: center;
+      font-weight: bold;
+      font-size: 12pt;
+      margin-bottom: 4pt;
+    }
+
+    .firma {
+      display: block;
+      margin: 0 auto 2pt auto;
+      width: 4cm;
+    }
+
+    .firmante {
+      text-align: center;
+      font-weight: bold;
+      font-size: 12pt;
+      margin-bottom: 0;
+      line-height: 1.15;
+    }
+
+    .firmante-cargo {
+      text-align: center;
+      font-style: italic;
+      font-size: 10pt;
+      line-height: 1.15;
+    }
+
+    /* QR */
+    .qr-wrapper {
+      text-align: center;
+      margin-top: 6pt;
+    }
+
+    .qr-wrapper img {
+      width: 3cm;
+      height: 3cm;
+    }
+
+    .qr-leyenda {
+      text-align: center;
+      font-size: 7pt;
+      color: #777;
+      font-style: italic;
+      margin-top: 1pt;
+    }
+  </style>
+</head>
+<body>
+  <div class="pagina">
+    <div class="contenido">
+
+      <div class="encabezado-oficio">
+        <p class="fecha">Villahermosa, Tabasco a {{ fecha_letra }}</p>
+        <p class="oficio">Oficio: {{ numero_oficio }}</p>
+        <p class="asunto">Asunto: Pase de Caja</p>
+      </div>
+
+      <br>
+
+      <div class="destinatario">
+        <p class="nombre">ANDRÉS BALDEMAR SANDOVAL</p>
+        <p>Director de Recaudación</p>
+        <p>Subsecretaría de Ingresos</p>
+        <p>Secretaría de Administración y Finanzas</p>
+        <p>del Gobierno del Estado de Tabasco.</p>
+      </div>
+      <br>
+
+      <p class="cuerpo">
+        Por este conducto y de manera respetuosa, le solicito efectuar el cobro
+        y la expedición del recibo oficial a nombre de: {{ nombre_ciudadano }} por la cantidad de ${{ monto }} ({{ monto_letra }})
+        equivalente a {{ uma_cantidad }} UMA. ${{ uma_valor }}x{{ uma_cantidad_entera }},
+        por concepto de Inscripción en el Registro Estatal de Agentes Inmobiliarios
+        y Licencias para Operaciones Inmobiliarias correspondientes al año {{ anio }}.
+      </p>
+      <br>
+
+      <p class="cierre">
+        Esperando contar con su participación, aprovecho la ocasión para
+        enviarle un cordial saludo.
+      </p>
+
+      <p class="atentamente">Atentamente</p>
+
+      <img src="{{ firma_url }}" class="firma" alt="Firma">
+
+      <p class="firmante">Paulina Velázquez Montalvo</p>
+      <p class="firmante-cargo">Directora de Desarrollo Comercial</p>
+
+      <br>
+
+      <div class="qr-wrapper">
+        <img src="{{ qr_url }}" alt="QR">
+      </div>
+      <p class="qr-leyenda">Escanee para verificar la autenticidad</p>
+
+    </div>
+  </div>
+</body>
+</html>

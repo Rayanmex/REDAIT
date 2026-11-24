@@ -1,0 +1,38 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/solicitud.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="confirmacion-wrapper">
+  <div class="confirmacion-card">
+
+    <div class="confirmacion-icon">✓</div>
+
+    <h2>¡Solicitud recibida!</h2>
+
+    <p class="confirmacion-mensaje">
+      Estimado usuario, hemos recibido tu información y a continuación uno de nuestros
+      validadores le dará seguimiento a su solicitud.
+      Por lo que ahora se encuentra <strong>en revisión</strong>.
+    </p>
+
+    <div class="confirmacion-folio">
+      <span class="label">Folio de seguimiento</span>
+      <span class="value">{{ solicitud.folio }}</span>
+    </div>
+
+    <p class="confirmacion-nota">
+      Guarda tu folio. Puedes consultar el estado de tu trámite en cualquier momento.
+    </p>
+
+    <div class="confirmacion-botones">
+      <a href="{% url 'usuarios:panel' %}" class="btn-primary">Volver al panel</a>
+      <a href="{% url 'usuarios:mi_solicitud' %}" class="btn-outline">Ver mi solicitud</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,620 @@
+/* ============================================
+   PANEL ADMIN - REDAIT
+   ============================================ */
+
+.admin-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+}
+
+/* Header */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #991547;
+    margin: 0;
+}
+
+.admin-header p {
+    color: #6b7280;
+    margin: 0.2rem 0 0;
+    font-size: 0.95rem;
+}
+
+.admin-header-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* KPIs */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+}
+
+.kpi-row.compact .kpi-card {
+    padding: 1.1rem;
+}
+
+.kpi-row.compact .kpi-valor {
+    font-size: 1.8rem;
+}
+
+.kpi-row.compact .kpi-label {
+    font-size: 0.72rem;
+}
+
+.kpi-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid #f1f5f9;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(153,21,71,0.12);
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: #991547;
+}
+
+.kpi-card.pendientes::before { background: #f59e0b; }
+.kpi-card.aprobadas::before { background: #22c55e; }
+.kpi-card.rechazadas::before { background: #ef4444; }
+.kpi-card.total::before { background: #991547; }
+.kpi-card.mes::before { background: #C49955; }
+
+.kpi-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.kpi-valor {
+    font-size: 2.4rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #1f2937;
+}
+
+.kpi-icon {
+    position: absolute;
+    right: 1.2rem;
+    top: 1.2rem;
+    font-size: 1.8rem;
+    opacity: 0.15;
+    color: #991547;
+}
+
+/* Filtros */
+.filtros-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid #f1f5f9;
+    margin-bottom: 1.5rem;
+}
+
+.filtros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+.filtros-grid .form-field label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.filtros-grid input,
+.filtros-grid select {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: #1f2937;
+    background: #ffffff;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.filtros-grid input:focus,
+.filtros-grid select:focus {
+    outline: none;
+    border-color: #991547;
+    box-shadow: 0 0 0 3px rgba(153,21,71,0.1);
+}
+
+.filtros-botones {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Tabla */
+.tabla-solicitudes {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid #f1f5f9;
+    overflow: hidden;
+}
+
+.tabla-solicitudes table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-solicitudes thead th {
+    background: #f8fafc;
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.tabla-solicitudes tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.9rem;
+    color: #1f2937;
+}
+
+.tabla-solicitudes tbody tr:hover {
+    background: #fafbfc;
+}
+
+.tabla-solicitudes tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.folio-cell {
+    font-weight: 700;
+    color: #991547;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+}
+
+/* Detalle */
+.detalle-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .detalle-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.detalle-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid #f1f5f9;
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.detalle-card h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #991547;
+    margin-bottom: 1rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detalle-dl {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 0.6rem 1rem;
+}
+
+.detalle-dl dt {
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.detalle-dl dd {
+    font-size: 0.92rem;
+    color: #1f2937;
+    margin: 0;
+    word-break: break-word;
+}
+
+.doc-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 0.9rem;
+    background: #fafbfc;
+    border: 1px solid #f1f5f9;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    text-decoration: none;
+    color: #1f2937;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.doc-link:hover {
+    background: #fef7fa;
+    border-color: #991547;
+    color: #991547;
+}
+
+.doc-link .nombre {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.doc-link .icono {
+    color: #991547;
+    font-size: 1.1rem;
+}
+
+/* Acciones admin */
+.acciones-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.acciones-admin textarea,
+.comentario-textarea {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    resize: vertical;
+    min-height: 130px;
+    color: #1f2937;
+    background: #fafafa;
+    line-height: 1.5;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.acciones-admin textarea:focus,
+.comentario-textarea:focus {
+    outline: none;
+    border-color: #991547;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(153,21,71,0.08);
+}
+
+.comentario-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 0.5rem;
+}
+
+.comentario-hint {
+    display: block;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 0.4rem;
+}
+
+/* Historial */
+.historial-item {
+    display: flex;
+    gap: 0.9rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.historial-item:last-child {
+    border-bottom: none;
+}
+
+.historial-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #991547;
+    font-size: 0.9rem;
+}
+
+.historial-body {
+    flex: 1;
+}
+
+.historial-body .titulo {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.15rem;
+}
+
+.historial-body .meta {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin-bottom: 0.3rem;
+}
+
+.historial-body .comentario {
+    font-size: 0.85rem;
+    color: #1f2937;
+    background: #fafbfc;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    border-left: 3px solid #C49955;
+    margin-top: 0.4rem;
+    line-height: 1.5;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #d1d5db;
+    margin-bottom: 0.8rem;
+}
+
+.empty-state p {
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* ============================================
+   BOTONES REDAIT
+   ============================================ */
+
+.btn-redait {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #991547 0%, #771139 100%);
+    color: #ffffff;
+    padding: 0.7rem 1.6rem;
+    border-radius: 50px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(153, 21, 71, 0.2);
+}
+
+.btn-redait:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(153, 21, 71, 0.35);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-redait-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: #991547;
+    padding: 0.65rem 1.6rem;
+    border-radius: 50px;
+    border: 2px solid #991547;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-redait-outline:hover {
+    background: #991547;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(153, 21, 71, 0.25);
+    text-decoration: none;
+}
+
+/* Botón pequeño para tablas */
+.btn-tabla {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, #991547 0%, #771139 100%);
+    color: #ffffff;
+    padding: 0.45rem 1rem;
+    border-radius: 50px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.8rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-tabla:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(153, 21, 71, 0.3);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Botones de acción */
+.btn-aprobar,
+.btn-rechazar,
+.btn-comentar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.2rem;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.92rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #ffffff;
+    width: 100%;
+}
+
+.btn-aprobar {
+    background: linear-gradient(135deg, #22c55e 0%, #166534 100%);
+}
+
+.btn-aprobar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-rechazar {
+    background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+}
+
+.btn-rechazar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-comentar {
+    background: linear-gradient(135deg, #D4A555 0%, #b8923f 100%);
+    color: #1f2937;
+}
+
+.btn-comentar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 165, 85, 0.3);
+    color: #1f2937;
+    text-decoration: none;
+}
+
+/* ============================================
+   ESTADO PILL (colores por estado)
+   ============================================ */
+
+.estado-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 50px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.estado-pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+.estado-pill.borrador         { background: #f1f5f9; color: #475569; }
+.estado-pill.en_revision      { background: #dbeafe; color: #1e40af; }
+.estado-pill.aprobada         { background: #dcfce7; color: #166534; }
+.estado-pill.requiere_accion  { background: #fef3c7; color: #92400e; }
+.estado-pill.rechazada        { background: #fee2e2; color: #991b1b; }
+.estado-pill.licencia_emitida { background: #bbf7d0; color: #14532d; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tabla-solicitudes {
+        overflow-x: auto;
+    }
+    .tabla-solicitudes table {
+        min-width: 700px;
+    }
+    .detalle-dl {
+        grid-template-columns: 1fr;
+    }
+    .admin-header h1 {
+        font-size: 1.4rem;
+    }
+    .kpi-valor {
+        font-size: 1.8rem;
+    }
+    .admin-header-actions {
+        width: 100%;
+    }
+}

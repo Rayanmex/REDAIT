@@ -1,0 +1,497 @@
+/* ============================================
+   RESUMEN DE SOLICITUD
+   ============================================ */
+
+.resumen-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+}
+
+.resumen-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.resumen-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 0.4rem;
+}
+
+.resumen-header p {
+    color: var(--text-gray);
+    font-size: 1rem;
+}
+
+/* Tarjeta de cada paso */
+.resumen-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid #f1f5f9;
+    margin-bottom: 1.2rem;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.resumen-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.resumen-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 1.5rem;
+    background: linear-gradient(90deg, rgba(196,153,85,0.08) 0%, rgba(153,21,71,0.06) 100%);
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.resumen-card-header h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin: 0;
+}
+
+.resumen-card-header h3 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--gradiente-secundario);
+    color: var(--white);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.resumen-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.resumen-badge.ok {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.resumen-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+.resumen-card-body {
+    padding: 1.3rem 1.5rem;
+}
+
+.resumen-card-body dl {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 0.5rem 1rem;
+    margin: 0;
+}
+
+.resumen-card-body dt {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text-gray);
+}
+
+.resumen-card-body dd {
+    font-size: 0.92rem;
+    color: var(--text-dark);
+    margin: 0;
+    word-break: break-word;
+}
+
+.resumen-vacio {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.resumen-vacio a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: underline;
+    font-style: normal;
+}
+
+/* Lista de archivos */
+.resumen-archivos {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.resumen-archivos li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.resumen-archivos li a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.resumen-archivos li a:hover {
+    text-decoration: underline;
+}
+
+.resumen-archivos li a::before {
+    content: '📎';
+    font-size: 0.85rem;
+}
+
+/* Caja de advertencia / info */
+.resumen-info {
+    background: #fef7fa;
+    border-left: 4px solid var(--primary);
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+/* Caja de acción final */
+.resumen-acciones {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 2rem 1.5rem;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid #f1f5f9;
+}
+
+.resumen-acciones p {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+}
+
+.btn-enviar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: var(--gradiente-secundario);
+    color: var(--white);
+    padding: 1rem 3rem;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.btn-enviar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 35px rgba(153,21,71,0.35);
+}
+
+.btn-enviar:disabled,
+.btn-enviar.disabled {
+    background: #d1d5db;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ============================================
+   CONFIRMACIÓN
+   ============================================ */
+
+.confirmacion-wrapper {
+    max-width: 720px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+}
+
+.confirmacion-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 60px rgba(153,21,71,0.12);
+    border: 2px solid var(--secondary);
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.confirmacion-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--gradiente-primario);
+}
+
+.confirmacion-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: var(--gradiente-secundario);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 3rem;
+    color: var(--white);
+    animation: popIn 0.5s ease-out;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.confirmacion-card h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.confirmacion-mensaje {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-dark);
+    max-width: 560px;
+    margin: 0 auto 1.5rem;
+}
+
+.confirmacion-folio {
+    display: inline-block;
+    background: #fef7fa;
+    border: 2px dashed var(--primary);
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    margin: 1rem 0 1.5rem;
+}
+
+.confirmacion-folio .label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-gray);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.confirmacion-folio .value {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary);
+    letter-spacing: 0.05em;
+}
+
+.confirmacion-nota {
+    font-size: 0.85rem;
+    color: var(--text-gray);
+    margin: 1.5rem 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.confirmacion-botones {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+/* ============================================
+   MI SOLICITUD (estado)
+   ============================================ */
+
+.mi-solicitud-wrapper {
+    max-width: 720px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+}
+
+.mi-solicitud-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid #f1f5f9;
+    padding: 2rem;
+}
+
+.mi-solicitud-card h1 {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.estado-badge {
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.estado-badge.en_revision {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.estado-badge.aprobada {
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.estado-badge.rechazada {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.estado-badge.borrador {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.mi-solicitud-info {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 0.7rem 1rem;
+    margin: 1.5rem 0;
+}
+
+.mi-solicitud-info dt {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text-gray);
+}
+
+.mi-solicitud-info dd {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+/* Barra de progreso */
+.progreso-bar {
+    width: 100%;
+    height: 10px;
+    background: #f1f5f9;
+    border-radius: 50px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.progreso-bar-fill {
+    height: 100%;
+    background: var(--gradiente-primario);
+    border-radius: 50px;
+    transition: width 0.5s ease;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 640px) {
+    .resumen-card-body dl,
+    .mi-solicitud-info {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+    }
+
+    .resumen-card-body dt,
+    .mi-solicitud-info dt {
+        margin-top: 0.6rem;
+    }
+
+    .confirmacion-card {
+        padding: 2rem 1.2rem;
+    }
+
+    .confirmacion-folio .value {
+        font-size: 1.5rem;
+    }
+
+    .resumen-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .btn-enviar {
+        width: 100%;
+        padding: 1rem 1.5rem;
+    }
+}
+
+/* Botones propios para evitar conflicto con Bootstrap */
+.btn-redait {
+    display: inline-block;
+    background: var(--gradiente-secundario);
+    color: var(--white);
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.btn-redait:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(153, 21, 71, 0.35);
+    color: var(--white);
+}
+
+.btn-redait-outline {
+    display: inline-block;
+    background: transparent;
+    color: var(--primary);
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    border: 2px solid var(--primary);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.btn-redait-outline:hover {
+    background: var(--primary);
+    color: var(--white);
+}

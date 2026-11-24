@@ -1,0 +1,297 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{% if accion == 'crear' %}Nueva Noticia{% else %}Editar Noticia{% endif %} - Admin REDAIT{% endblock %}
+
+{% block extra_css %}
+<!-- Quill CSS -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+<style>
+  .ql-container { font-size: 1rem; font-family: inherit; }
+  .ql-editor { min-height: 300px; }
+  .ql-toolbar { border-top-left-radius: 8px; border-top-right-radius: 8px; }
+  .ql-container { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem;">
+
+  <div style="margin-bottom: 2rem;">
+    <a href="{% url 'noticias:admin_lista' %}"
+       style="color: #991547; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+      <i class="fas fa-arrow-left"></i> Volver al listado
+    </a>
+    <h1 style="font-size: 1.8rem; font-weight: 800; color: #1f2937; margin: 0.8rem 0 0;">
+      {% if accion == 'crear' %}
+        <i class="fas fa-plus-circle" style="color: #991547;"></i> Nueva noticia
+      {% else %}
+        <i class="fas fa-edit" style="color: #991547;"></i> Editar noticia
+      {% endif %}
+    </h1>
+  </div>
+
+  {% if form.errors %}
+    <div style="background: #fef2f2; border-left: 4px solid #dc2626;
+                padding: 1rem 1.2rem; border-radius: 8px; margin-bottom: 1.5rem;">
+      <strong style="color: #991b1b;">Por favor corrige los siguientes errores:</strong>
+      <ul style="margin: 0.5rem 0 0 1rem; color: #991b1b;">
+        {% for field, errors in form.errors.items %}
+          {% for error in errors %}
+            <li><strong>{{ field }}:</strong> {{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" id="noticiaForm"
+        style="background: white; border-radius: 14px; padding: 2rem;
+               box-shadow: 0 2px 12px rgba(0,0,0,0.05);">
+    {% csrf_token %}
+
+    <!-- Título -->
+    <div style="margin-bottom: 1.5rem;">
+      <label style="display: block; font-weight: 700; color: #4b5563;
+                    font-size: 0.85rem; margin-bottom: 0.4rem;">
+        Título <span style="color: #dc2626;">*</span>
+      </label>
+      {{ form.titulo }}
+      {% if form.titulo.errors %}
+        <small style="color: #dc2626; font-size: 0.75rem;">{{ form.titulo.errors.0 }}</small>
+      {% endif %}
+    </div>
+
+    <!-- Extracto -->
+    <div style="margin-bottom: 1.5rem;">
+      <label style="display: block; font-weight: 700; color: #4b5563;
+                    font-size: 0.85rem; margin-bottom: 0.4rem;">
+        Extracto <span style="color: #dc2626;">*</span>
+      </label>
+      {{ form.extracto }}
+      <small style="color: #6b7280; font-size: 0.75rem;">
+        Resumen corto que aparecerá en el listado (máx. 400 caracteres).
+      </small>
+      {% if form.extracto.errors %}
+        <br><small style="color: #dc2626; font-size: 0.75rem;">{{ form.extracto.errors.0 }}</small>
+      {% endif %}
+    </div>
+
+    <!-- Contenido (Quill) -->
+    <div style="margin-bottom: 1.5rem;">
+      <label style="display: block; font-weight: 700; color: #4b5563;
+                    font-size: 0.85rem; margin-bottom: 0.4rem;">
+        Contenido <span style="color: #dc2626;">*</span>
+      </label>
+      <div id="editor-container"></div>
+      <!-- Este textarea es el que realmente envía el contenido al servidor.
+           ID distinto al que Django genera por defecto para evitar conflictos. -->
+      <textarea name="contenido" id="contenido_real"
+                style="display: none;">{{ form.contenido.value|default:'' }}</textarea>
+      {% if form.contenido.errors %}
+        <small style="color: #dc2626; font-size: 0.75rem;">{{ form.contenido.errors.0 }}</small>
+      {% endif %}
+    </div>
+
+    <!-- Imagen + alt -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+                margin-bottom: 1.5rem;">
+      <div>
+        <label style="display: block; font-weight: 700; color: #4b5563;
+                      font-size: 0.85rem; margin-bottom: 0.4rem;">
+          Imagen de portada
+        </label>
+        {{ form.imagen_portada }}
+        {% if noticia.imagen_portada %}
+          <div style="margin-top: 0.5rem;">
+            <img src="{{ noticia.imagen_portada.url }}" alt="Actual"
+                 style="max-height: 100px; border-radius: 8px;">
+            <small style="display: block; color: #6b7280; font-size: 0.75rem; margin-top: 0.3rem;">
+              Imagen actual
+            </small>
+          </div>
+        {% endif %}
+      </div>
+      <div>
+        <label style="display: block; font-weight: 700; color: #4b5563;
+                      font-size: 0.85rem; margin-bottom: 0.4rem;">
+          Texto alternativo de imagen
+        </label>
+        {{ form.imagen_alt }}
+      </div>
+    </div>
+
+    <!-- Categoría + Estado -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+                margin-bottom: 1.5rem;">
+      <div>
+        <label style="display: block; font-weight: 700; color: #4b5563;
+                      font-size: 0.85rem; margin-bottom: 0.4rem;">
+          Categoría
+        </label>
+        {{ form.categoria }}
+      </div>
+      <div>
+        <label style="display: block; font-weight: 700; color: #4b5563;
+                      font-size: 0.85rem; margin-bottom: 0.4rem;">
+          Estado
+        </label>
+        {{ form.estado }}
+      </div>
+    </div>
+
+    <!-- Fechas -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+                margin-bottom: 1.5rem;">
+      <div>
+        <label style="display: block; font-weight: 700; color: #4b5563;
+                      font-size: 0.85rem; margin-bottom: 0.4rem;">
+          Fecha de publicación
+        </label>
+        {{ form.fecha_publicacion }}
+        {% if form.fecha_publicacion.errors %}
+          <small style="color: #dc2626; font-size: 0.75rem;">{{ form.fecha_publicacion.errors.0 }}</small>
+        {% endif %}
+      </div>
+      <div>
+        <label style="display: block; font-weight: 700; color: #4b5563;
+                      font-size: 0.85rem; margin-bottom: 0.4rem;">
+          Fecha de expiración (opcional)
+        </label>
+        {{ form.fecha_expiracion }}
+        {% if form.fecha_expiracion.errors %}
+          <small style="color: #dc2626; font-size: 0.75rem;">{{ form.fecha_expiracion.errors.0 }}</small>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Destacada -->
+    <div style="margin-bottom: 2rem;">
+      <label style="display: flex; align-items: center; gap: 0.5rem;
+                    font-weight: 600; color: #4b5563; cursor: pointer;">
+        {{ form.destacada }}
+        <span>⭐ Destacar en el home</span>
+      </label>
+    </div>
+
+    <!-- Botones -->
+    <div style="display: flex; justify-content: flex-end; gap: 0.8rem;
+                border-top: 1px solid #f1f5f9; padding-top: 1.5rem;">
+      <a href="{% url 'noticias:admin_lista' %}"
+         style="background: white; color: #991547; padding: 0.7rem 1.5rem;
+                border-radius: 50px; text-decoration: none; font-weight: 700;
+                border: 2px solid #991547;">
+        Cancelar
+      </a>
+      <button type="submit" id="btnSubmit"
+              style="background: linear-gradient(135deg, #991547 0%, #771139 100%);
+                     color: white; padding: 0.7rem 2rem; border-radius: 50px;
+                     border: none; font-weight: 700; cursor: pointer;
+                     box-shadow: 0 4px 15px rgba(153,21,71,0.3);">
+        <i class="fas fa-save"></i>
+        {% if accion == 'crear' %}Publicar noticia{% else %}Guardar cambios{% endif %}
+      </button>
+    </div>
+
+  </form>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Quill JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+(function() {
+    'use strict';
+
+    function initQuill() {
+        var editorContainer = document.getElementById('editor-container');
+        var textarea = document.getElementById('contenido_real');
+        var form = document.getElementById('noticiaForm');
+
+        if (!editorContainer || !textarea || !form) {
+            console.error('❌ No se encontró editor-container, contenido_real o noticiaForm');
+            return;
+        }
+
+        // ============================================================
+        // INICIALIZAR QUILL
+        // ============================================================
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link', 'image'],
+                    ['clean']
+                ]
+            },
+            placeholder: 'Escribe el contenido de la noticia...'
+        });
+
+        // ============================================================
+        // CARGAR CONTENIDO INICIAL (al editar)
+        // ============================================================
+        var contenidoInicial = textarea.value.trim();
+        if (contenidoInicial) {
+            quill.clipboard.dangerouslyPasteHTML(contenidoInicial);
+            console.log('✅ Contenido inicial cargado:', contenidoInicial.substring(0, 100));
+        }
+
+        // ============================================================
+        // SINCRONIZAR EN CADA CAMBIO (no solo en submit)
+        // ============================================================
+        function sincronizar() {
+            var html = quill.root.innerHTML;
+            if (html === '<p><br></p>' || html.trim() === '') {
+                textarea.value = '';
+            } else {
+                textarea.value = html;
+            }
+        }
+
+        quill.on('text-change', sincronizar);
+
+        // ============================================================
+        // SINCRONIZAR ANTES DE ENVIAR
+        // ============================================================
+        form.addEventListener('submit', function(e) {
+            sincronizar();
+
+            if (textarea.value.trim() === '') {
+                // Si aún así está vacío, detener el envío y avisar
+                e.preventDefault();
+                alert('⚠️ El contenido de la noticia está vacío. Por favor escribe algo antes de publicar.');
+                return false;
+            }
+
+            console.log('📤 Enviando contenido:', textarea.value.substring(0, 200));
+        });
+
+        // ============================================================
+        // FALLBACK: sincronizar también al hacer clic en el botón
+        // ============================================================
+        var btnSubmit = document.getElementById('btnSubmit');
+        if (btnSubmit) {
+            btnSubmit.addEventListener('mousedown', sincronizar);
+            btnSubmit.addEventListener('touchstart', sincronizar, { passive: true });
+        }
+
+        console.log('✅ Quill inicializado correctamente');
+        console.log('📝 Textarea inicial:', textarea.value ? 'CON contenido' : 'VACÍO');
+    }
+
+    // Ejecutar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initQuill);
+    } else {
+        initQuill();
+    }
+})();
+</script>
+{% endblock %}

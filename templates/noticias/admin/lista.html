@@ -1,0 +1,192 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Noticias - Admin REDAIT{% endblock %}
+
+{% block content %}
+<div style="max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem;">
+
+  <div style="display: flex; justify-content: space-between; align-items: center;
+              margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h1 style="font-size: 1.8rem; font-weight: 800; color: #1f2937; margin: 0;">
+        <i class="fas fa-newspaper" style="color: #991547;"></i> Administrar Noticias
+      </h1>
+      <p style="color: #6b7280; margin: 0.3rem 0 0;">{{ total }} noticia{{ total|pluralize }} en total</p>
+    </div>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <a href="{% url 'noticias:admin_categorias' %}"
+         style="background: white; color: #991547; padding: 0.7rem 1.4rem;
+                border-radius: 50px; text-decoration: none; font-weight: 700;
+                border: 2px solid #991547; font-size: 0.9rem;">
+        <i class="fas fa-tags"></i> Categorías
+      </a>
+      <a href="{% url 'noticias:admin_crear' %}"
+         style="background: linear-gradient(135deg, #991547 0%, #771139 100%);
+                color: white; padding: 0.7rem 1.4rem; border-radius: 50px;
+                text-decoration: none; font-weight: 700; font-size: 0.9rem;
+                box-shadow: 0 4px 15px rgba(153,21,71,0.3);">
+        <i class="fas fa-plus"></i> Nueva noticia
+      </a>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <form method="get" style="background: white; border-radius: 14px; padding: 1.2rem;
+                             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                             margin-bottom: 1.5rem;
+                             display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                             gap: 1rem; align-items: end;">
+    <div>
+      <label style="font-size: 0.78rem; font-weight: 700; color: #6b7280;
+                    text-transform: uppercase; display: block; margin-bottom: 0.3rem;">
+        Buscar
+      </label>
+      <input type="text" name="q" value="{{ filtros.q }}"
+             placeholder="Título o extracto..."
+             style="width: 100%; padding: 0.6rem 0.9rem; border: 2px solid #e5e7eb;
+                    border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+    </div>
+
+    <div>
+      <label style="font-size: 0.78rem; font-weight: 700; color: #6b7280;
+                    text-transform: uppercase; display: block; margin-bottom: 0.3rem;">
+        Estado
+      </label>
+      <select name="estado"
+              style="width: 100%; padding: 0.6rem 0.9rem; border: 2px solid #e5e7eb;
+                     border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+        <option value="">Todos</option>
+        {% for val, etiq in estados %}
+          <option value="{{ val }}" {% if filtros.estado == val %}selected{% endif %}>{{ etiq }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label style="font-size: 0.78rem; font-weight: 700; color: #6b7280;
+                    text-transform: uppercase; display: block; margin-bottom: 0.3rem;">
+        Categoría
+      </label>
+      <select name="cat"
+              style="width: 100%; padding: 0.6rem 0.9rem; border: 2px solid #e5e7eb;
+                     border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+        <option value="">Todas</option>
+        {% for cat in categorias %}
+          <option value="{{ cat.id }}" {% if filtros.cat == cat.id|stringformat:"s" %}selected{% endif %}>
+            {{ cat.nombre }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem;">
+      <button type="submit"
+              style="background: #991547; color: white; border: none; padding: 0.6rem 1.4rem;
+                     border-radius: 8px; font-weight: 700; cursor: pointer;">
+        <i class="fas fa-search"></i> Filtrar
+      </button>
+      <a href="{% url 'noticias:admin_lista' %}"
+         style="background: white; color: #991547; padding: 0.6rem 1.4rem;
+                border-radius: 8px; text-decoration: none; font-weight: 700;
+                border: 2px solid #991547; font-size: 0.9rem;">
+        Limpiar
+      </a>
+    </div>
+  </form>
+
+  <!-- Tabla -->
+  <div style="background: white; border-radius: 14px; overflow: hidden;
+              box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+    {% if noticias %}
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+        <thead>
+          <tr style="background: #f8fafc; border-bottom: 2px solid #e5e7eb;">
+            <th style="padding: 0.9rem 1rem; text-align: left; font-weight: 700; color: #4b5563;">Título</th>
+            <th style="padding: 0.9rem 1rem; text-align: left; font-weight: 700; color: #4b5563;">Categoría</th>
+            <th style="padding: 0.9rem 1rem; text-align: center; font-weight: 700; color: #4b5563;">Estado</th>
+            <th style="padding: 0.9rem 1rem; text-align: center; font-weight: 700; color: #4b5563;">Destacada</th>
+            <th style="padding: 0.9rem 1rem; text-align: left; font-weight: 700; color: #4b5563;">Publicación</th>
+            <th style="padding: 0.9rem 1rem; text-align: center; font-weight: 700; color: #4b5563;">Vistas</th>
+            <th style="padding: 0.9rem 1rem; text-align: right; font-weight: 700; color: #4b5563;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for n in noticias %}
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 0.9rem 1rem;">
+                <strong style="color: #1f2937; display: block;">{{ n.titulo|truncatechars:60 }}</strong>
+                <small style="color: #9ca3af;">{{ n.slug|truncatechars:50 }}</small>
+              </td>
+              <td style="padding: 0.9rem 1rem;">
+                {% if n.categoria %}
+                  <span style="background: {{ n.categoria.color }}20; color: {{ n.categoria.color }};
+                               padding: 0.2rem 0.7rem; border-radius: 50px;
+                               font-size: 0.75rem; font-weight: 700;">
+                    {{ n.categoria.nombre }}
+                  </span>
+                {% else %}
+                  <span style="color: #9ca3af;">—</span>
+                {% endif %}
+              </td>
+              <td style="padding: 0.9rem 1rem; text-align: center;">
+                {% if n.estado == 'publicada' %}
+                  <span style="background: #dcfce7; color: #166534; padding: 0.2rem 0.7rem;
+                               border-radius: 50px; font-size: 0.72rem; font-weight: 700;">
+                    Publicada
+                  </span>
+                {% elif n.estado == 'borrador' %}
+                  <span style="background: #fef3c7; color: #92400e; padding: 0.2rem 0.7rem;
+                               border-radius: 50px; font-size: 0.72rem; font-weight: 700;">
+                    Borrador
+                  </span>
+                {% else %}
+                  <span style="background: #f1f5f9; color: #475569; padding: 0.2rem 0.7rem;
+                               border-radius: 50px; font-size: 0.72rem; font-weight: 700;">
+                    Archivada
+                  </span>
+                {% endif %}
+              </td>
+              <td style="padding: 0.9rem 1rem; text-align: center;">
+                <form method="post" action="{% url 'noticias:admin_toggle_destacada' n.id %}"
+                      style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit"
+                          style="background: none; border: none; cursor: pointer; font-size: 1.1rem;
+                                 color: {% if n.destacada %}#f59e0b{% else %}#d1d5db{% endif %};"
+                          title="{% if n.destacada %}Quitar destacada{% else %}Destacar{% endif %}">
+                    <i class="fas fa-star"></i>
+                  </button>
+                </form>
+              </td>
+              <td style="padding: 0.9rem 1rem; color: #6b7280;">
+                {{ n.fecha_publicacion|date:"d/m/Y H:i" }}
+              </td>
+              <td style="padding: 0.9rem 1rem; text-align: center; color: #6b7280;">
+                {{ n.vistas }}
+              </td>
+              <td style="padding: 0.9rem 1rem; text-align: right;">
+                <a href="{% url 'noticias:admin_editar' n.id %}"
+                   style="color: #991547; font-weight: 600; text-decoration: none;
+                          margin-right: 0.5rem; font-size: 0.85rem;">
+                  <i class="fas fa-edit"></i> Editar
+                </a>
+                <a href="{% url 'noticias:admin_eliminar' n.id %}"
+                   style="color: #dc2626; font-weight: 600; text-decoration: none; font-size: 0.85rem;">
+                  <i class="fas fa-trash"></i> Eliminar
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div style="text-align: center; padding: 3rem; color: #6b7280;">
+        <i class="fas fa-newspaper" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem; display: block;"></i>
+        <p>No hay noticias aún. <a href="{% url 'noticias:admin_crear' %}" style="color: #991547; font-weight: 700;">Crea la primera</a>.</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

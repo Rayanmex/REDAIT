@@ -1,0 +1,226 @@
+{% extends 'base/dashboard_base.html' %}
+{% load static %}
+
+{% block panel_content %}
+
+<div class="form-page-wrapper">
+    <div class="form-card-full">
+
+        <div class="form-header">
+            <span class="form-step-badge">Paso 3 de 4</span>
+            <h1>Documentos legales</h1>
+            <p>
+                {% if solicitud.es_revalidacion %}
+                    Sube los documentos para revalidar tu licencia
+                {% elif solicitud.es_persona_moral %}
+                    Sube los documentos legales de tu empresa (persona moral)
+                {% else %}
+                    Sube las constancias requeridas en formato PDF
+                {% endif %}
+            </p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {# ============================================================ #}
+        {# AVISO SEGÚN EL TIPO DE TRÁMITE #}
+        {# ============================================================ #}
+        {% if solicitud.es_revalidacion %}
+            <div style="background: #eff6ff; border: 2px solid #93c5fd; border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1.5rem;">
+                <p style="margin: 0; color: #1e40af; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Revalidación:</strong> solo necesitas actualizar 2 documentos.
+                    Tu folio de licencia <strong>{{ solicitud.ciudadano.folio_licencia }}</strong> se mantiene.
+                </p>
+            </div>
+        {% elif solicitud.es_persona_moral %}
+            <div style="background: #fef7fa; border: 2px solid #C49955; border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1.5rem;">
+                <p style="margin: 0; color: #78350f; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Persona moral:</strong> necesitas subir 7 documentos, incluyendo el acta constitutiva, poder notarial y logotipo.
+                </p>
+            </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                {# ============================================================ #}
+                {# 1. CONSTANCIA DE SITUACIÓN FISCAL (todos los trámites) #}
+                {# ============================================================ #}
+                <div class="form-field">
+                    <div class="file-dropzone">
+                        <span class="file-label">Constancia de situación fiscal <span class="required">*</span></span>
+                        <p class="file-help">
+                            Actualizada del mes en curso. Si no la tienes, descárgala en el
+                            <a href="https://www.sat.gob.mx/personas/tramites-del-rfc" target="_blank" style="color: #991547; font-weight: 700;">portal del SAT</a>.
+                            En formato PDF.
+                        </p>
+                        <input type="file" name="constancia_situacion_fiscal" accept=".pdf">
+                        {% if documentos.constancia_situacion_fiscal %}
+                            <span class="file-uploaded">
+                                <i class="fas fa-check-circle"></i> Archivo subido —
+                                <a href="{{ documentos.constancia_situacion_fiscal.url }}" target="_blank">Ver</a>
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# ============================================================ #}
+                {# BLOQUE A: TRÁMITE NUEVO (Persona Física o Moral) #}
+                {# ============================================================ #}
+                {% if not solicitud.es_revalidacion %}
+
+                    {# PROFECO #}
+                    <div class="form-field">
+                        <div class="file-dropzone">
+                            <span class="file-label">Constancia de registro ante PROFECO <span class="required">*</span></span>
+                            <p class="file-help">Del Contrato de Adhesión tipo Prestación de Servicios de Intermediación. En formato PDF.</p>
+                            <input type="file" name="constancia_profeco" accept=".pdf">
+                            {% if documentos.constancia_profeco %}
+                                <span class="file-uploaded">
+                                    <i class="fas fa-check-circle"></i> Archivo subido —
+                                    <a href="{{ documentos.constancia_profeco.url }}" target="_blank">Ver</a>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# NO ANTECEDENTES #}
+                    <div class="form-field">
+                        <div class="file-dropzone">
+                            <span class="file-label">Carta de no antecedentes penales <span class="required">*</span></span>
+                            <p class="file-help">
+                                Por delitos patrimoniales.
+                                {% if solicitud.es_persona_moral %}
+                                    Del representante legal.
+                                {% endif %}
+                                En formato PDF.
+                            </p>
+                            <input type="file" name="carta_no_antecedentes" accept=".pdf">
+                            {% if documentos.carta_no_antecedentes %}
+                                <span class="file-uploaded">
+                                    <i class="fas fa-check-circle"></i> Archivo subido —
+                                    <a href="{{ documentos.carta_no_antecedentes.url }}" target="_blank">Ver</a>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# CARTA BAJO PROTESTA #}
+                    <div class="form-field">
+                        <div class="file-dropzone">
+                            <span class="file-label">Carta de Bajo Protesta de Decir Verdad <span class="required">*</span></span>
+                            <p class="file-help">Proporcionada por la Secretaría de Turismo y Desarrollo Económico. En formato PDF.</p>
+                            <input type="file" name="carta_bajo_protesta" accept=".pdf">
+                            {% if documentos.carta_bajo_protesta %}
+                                <span class="file-uploaded">
+                                    <i class="fas fa-check-circle"></i> Archivo subido —
+                                    <a href="{{ documentos.carta_bajo_protesta.url }}" target="_blank">Ver</a>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                {% endif %}
+
+                {# ============================================================ #}
+                {# BLOQUE B: PERSONA MORAL (solo trámite nuevo) #}
+                {# ============================================================ #}
+                {% if not solicitud.es_revalidacion and solicitud.es_persona_moral %}
+
+                    {# ACTA CONSTITUTIVA #}
+                    <div class="form-field">
+                        <div class="file-dropzone">
+                            <span class="file-label">Acta Constitutiva de la Sociedad <span class="required">*</span></span>
+                            <p class="file-help">Copia del documento constitutivo de la sociedad. En formato PDF.</p>
+                            <input type="file" name="acta_constitutiva" accept=".pdf">
+                            {% if documentos.acta_constitutiva %}
+                                <span class="file-uploaded">
+                                    <i class="fas fa-check-circle"></i> Archivo subido —
+                                    <a href="{{ documentos.acta_constitutiva.url }}" target="_blank">Ver</a>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# PODER NOTARIAL #}
+                    <div class="form-field">
+                        <div class="file-dropzone">
+                            <span class="file-label">Poder notarial del representante legal <span class="required">*</span></span>
+                            <p class="file-help">Copia certificada del poder notarial. En formato PDF.</p>
+                            <input type="file" name="poder_notarial" accept=".pdf">
+                            {% if documentos.poder_notarial %}
+                                <span class="file-uploaded">
+                                    <i class="fas fa-check-circle"></i> Archivo subido —
+                                    <a href="{{ documentos.poder_notarial.url }}" target="_blank">Ver</a>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# LOGOTIPO #}
+                    <div class="form-field">
+                        <div class="file-dropzone">
+                            <span class="file-label">Logotipo de la empresa <span class="required">*</span></span>
+                            <p class="file-help">Imagen institucional de la sociedad. En formato PNG o JPG.</p>
+                            <input type="file" name="logotipo_empresa" accept="image/png,image/jpeg">
+                            {% if documentos.logotipo_empresa %}
+                                <div class="file-preview">
+                                    <img src="{{ documentos.logotipo_empresa.url }}" alt="Logotipo de la empresa">
+                                    <p style="font-size: 0.85rem; color: #166534; margin-top: 0.5rem;">
+                                        <i class="fas fa-check-circle"></i> Logotipo subido
+                                    </p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                {% endif %}
+
+                {# ============================================================ #}
+                {# BLOQUE C: REVALIDACIÓN #}
+                {# ============================================================ #}
+                {% if solicitud.es_revalidacion %}
+
+                    {# CONSTANCIA DE INSCRIPCIÓN ANTERIOR #}
+                    <div class="form-field">
+                        <div class="file-dropzone">
+                            <span class="file-label">Constancia de Inscripción anterior <span class="required">*</span></span>
+                            <p class="file-help">Copia de la licencia de operaciones inmobiliarias anterior (o constancia de inscripción). En formato PDF.</p>
+                            <input type="file" name="constancia_inscripcion_anterior" accept=".pdf">
+                            {% if documentos.constancia_inscripcion_anterior %}
+                                <span class="file-uploaded">
+                                    <i class="fas fa-check-circle"></i> Archivo subido —
+                                    <a href="{{ documentos.constancia_inscripcion_anterior.url }}" target="_blank">Ver</a>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'usuarios:panel' %}" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn-save">
+                    Guardar y continuar <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'usuarios/emails/base_email.html' %}
+
+{% block contenido %}
+<h2 style="color:#991547; margin:0 0 15px; font-size:20px;">📥 Nueva solicitud recibida</h2>
+
+<p style="font-size:15px; line-height:1.6;">
+  Se ha recibido una nueva solicitud que requiere tu revisión.
+</p>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0; font-size:14px;">
+  <tr>
+    <td style="padding:8px 0; color:#6b7280; width:130px;"><strong>Folio:</strong></td>
+    <td style="padding:8px 0; color:#991547; font-weight:700; font-family: monospace;">{{ solicitud.folio }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0; color:#6b7280;"><strong>Ciudadano:</strong></td>
+    <td style="padding:8px 0;">{{ ciudadano.nombre_completo }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0; color:#6b7280;"><strong>Email:</strong></td>
+    <td style="padding:8px 0;">{{ ciudadano.user.email }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0; color:#6b7280;"><strong>Teléfono:</strong></td>
+    <td style="padding:8px 0;">{{ ciudadano.telefono }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0; color:#6b7280;"><strong>Tipo de trámite:</strong></td>
+    <td style="padding:8px 0;">{{ solicitud.get_tipo_tramite_display }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0; color:#6b7280;"><strong>Fecha:</strong></td>
+    <td style="padding:8px 0;">{{ solicitud.fecha_envio|date:"d/m/Y H:i" }}</td>
+  </tr>
+</table>
+
+<p style="text-align:center; margin:25px 0;">
+  <a href="{{ site_url }}/usuarios/admin-panel/solicitudes/{{ solicitud.id }}/" style="display:inline-block; background: linear-gradient(135deg,#991547 0%,#4a0a22 100%); color:#fff; text-decoration:none; padding:12px 30px; border-radius:50px; font-weight:700; font-size:14px;">
+    Revisar solicitud
+  </a>
+</p>
+{% endblock %}

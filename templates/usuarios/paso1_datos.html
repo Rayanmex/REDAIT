@@ -1,0 +1,183 @@
+{% extends 'base/dashboard_base.html' %}
+{% load static %}
+
+{% block panel_content %}
+
+<div class="form-page-wrapper">
+    <div class="form-card-full">
+
+        <div class="form-header">
+            <span class="form-step-badge">Paso 1 de 4</span>
+            <h1>Datos personales</h1>
+            <p>Confirma tus datos y agrega la información fiscal</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                {# ============ EMAIL (solo lectura) ============ #}
+                <div class="form-field">
+                    <label>Correo electrónico</label>
+                    <input type="text" value="{{ solicitud.ciudadano.user.email }}" readonly
+                           style="background: #f1f5f9; cursor: not-allowed;">
+                    <p class="help-text">
+                        <i class="fas fa-lock" style="color: #991547;"></i>
+                        Para cambiar tu correo, contacta al administrador.
+                    </p>
+                </div>
+
+                {# ============ NOMBRE (editable) ============ #}
+                <div class="form-field">
+                    <label for="nombre_completo">Nombre completo <span class="required">*</span></label>
+                    <input type="text" name="nombre_completo" id="nombre_completo"
+                           placeholder="Ej: JUAN PÉREZ LÓPEZ"
+                           style="text-transform: uppercase;"
+                           value="{{ solicitud.ciudadano.nombre_completo }}" required>
+                    <p class="help-text">Tal como aparece en tu identificación oficial.</p>
+                </div>
+
+                {# ============ TELÉFONO (editable) ============ #}
+                <div class="form-field">
+                    <label for="telefono">Teléfono <span class="required">*</span></label>
+                    <input type="tel" name="telefono" id="telefono" maxlength="10"
+                           placeholder="10 dígitos, ej. 9931234567"
+                           inputmode="numeric"
+                           value="{{ solicitud.ciudadano.telefono }}"
+                           oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"
+                           required>
+                    <p class="help-text">10 dígitos, sin espacios ni guiones.</p>
+                </div>
+
+                {# ============ RÉGIMEN FISCAL ============ #}
+                <div class="form-field">
+                    <label for="regimen_fiscal">Régimen fiscal <span class="required">*</span></label>
+                    <select name="regimen_fiscal" id="regimen_fiscal" required>
+                        {% for valor, etiqueta in datos.REGIMENES_FISCALES %}
+                            <option value="{{ valor }}" {% if datos.regimen_fiscal == valor %}selected{% endif %}>{{ etiqueta }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                {# ============ EMPRESA con autocompletado ============ #}
+                <div class="form-field">
+                    <label for="empresa_nombre">Empresa o corporativo</label>
+                    <input type="text" name="empresa_nombre" id="empresa_nombre"
+                           list="listaEmpresas"
+                           placeholder="Ej: INMOBILIARIA DEL SURESTE S.A. DE C.V."
+                           style="text-transform: uppercase;"
+                           value="{{ solicitud.ciudadano.nombre_empresa_display|default:'' }}">
+                    <datalist id="listaEmpresas">
+                        {% for empresa in empresas %}
+                            <option value="{{ empresa }}">
+                        {% endfor %}
+                    </datalist>
+                    <p class="help-text">
+                        <i class="fas fa-info-circle" style="color: #991547;"></i>
+                        Si trabajas en una empresa o corporativo, escríbela aquí. Si no aparece, se creará automáticamente. <strong>Opcional</strong>.
+                    </p>
+                </div>
+
+                {# ============ SEXO + TIPO DE TRÁMITE ============ #}
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="sexo">Sexo <span class="required">*</span></label>
+                        <select name="sexo" id="sexo" required>
+                            {% for valor, etiqueta in datos.SEXOS %}
+                                <option value="{{ valor }}" {% if datos.sexo == valor %}selected{% endif %}>{{ etiqueta }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="tipo_tramite">Tipo de trámite <span class="required">*</span></label>
+                        <select name="tipo_tramite" id="tipo_tramite" required>
+                            <option value="nuevo" {% if datos.tipo_tramite == 'nuevo' %}selected{% endif %}>Registro de nuevo agente inmobiliario</option>
+                            <option value="revalidacion" {% if datos.tipo_tramite == 'revalidacion' %}selected{% endif %}>Revalidación</option>
+                        </select>
+                    </div>
+                </div>
+
+                {# ============ RFC + CURP ============ #}
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="rfc">RFC <span class="required">*</span></label>
+                        <input type="text" name="rfc" id="rfc" maxlength="13"
+                               placeholder="XAXX010101000"
+                               style="text-transform: uppercase;"
+                               value="{{ datos.rfc }}" required>
+                        <p class="help-text">13 caracteres con homoclave.</p>
+                    </div>
+
+                    <div class="form-field" id="campoCURP">
+                        <label for="curp">CURP <span class="required" id="reqCURP">*</span></label>
+                        <input type="text" name="curp" id="curp" maxlength="18"
+                               placeholder="XAXX010101HDFXXX00"
+                               style="text-transform: uppercase;"
+                               value="{{ datos.curp|default:'' }}">
+                        <p class="help-text" id="ayudaCURP">18 caracteres.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'usuarios:panel' %}" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn-save">
+                    Guardar y continuar <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mayúsculas automáticas
+        ['nombre_completo', 'empresa_nombre', 'rfc', 'curp'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+            }
+        });
+
+        // CURP opcional para persona moral
+        var regimen = document.getElementById('regimen_fiscal');
+        if (regimen) {
+            var actualizarCURP = function() {
+                var reqCURP = document.getElementById('reqCURP');
+                var curp = document.getElementById('curp');
+                var ayudaCURP = document.getElementById('ayudaCURP');
+
+                if (regimen.value === 'pm') {
+                    reqCURP.style.display = 'none';
+                    curp.required = false;
+                    ayudaCURP.textContent = 'Opcional para personas morales.';
+                } else {
+                    reqCURP.style.display = 'inline';
+                    curp.required = true;
+                    ayudaCURP.textContent = '18 caracteres.';
+                }
+            };
+
+            regimen.addEventListener('change', actualizarCURP);
+            actualizarCURP();
+        }
+    });
+</script>
+
+{% endblock %}

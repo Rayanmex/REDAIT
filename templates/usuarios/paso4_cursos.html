@@ -1,0 +1,221 @@
+{% extends 'base/dashboard_base.html' %}
+{% load static %}
+
+{% block panel_content %}
+
+<div class="form-page-wrapper">
+    <div class="form-card-full">
+
+        <div class="form-header">
+            <span class="form-step-badge">Paso 4 de 4</span>
+            <h1>Cursos y capacitaciones</h1>
+            <p>Agrega tus cursos (mínimo 30 horas acumuladas) y tu carta compromiso</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {# ============================================================ #}
+        {# INDICADOR DE HORAS ACUMULADAS                                 #}
+        {# ============================================================ #}
+        <div style="background: {% if cumple_minimo %}#f0fdf4{% else %}#fef3c7{% endif %};
+                    border: 2px solid {% if cumple_minimo %}#86efac{% else %}#fcd34d{% endif %};
+                    border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <p style="margin: 0; font-size: 0.9rem; font-weight: 600;
+                              color: {% if cumple_minimo %}#166534{% else %}#92400e{% endif %};">
+                        {% if cumple_minimo %}
+                            <i class="fas fa-check-circle"></i> ¡Cumples con el mínimo requerido!
+                        {% else %}
+                            <i class="fas fa-exclamation-triangle"></i> Aún te faltan horas para el mínimo
+                        {% endif %}
+                    </p>
+                    <p style="margin: 0.3rem 0 0; font-size: 0.85rem;
+                              color: {% if cumple_minimo %}#166534{% else %}#92400e{% endif %};">
+                        Mínimo requerido: <strong>30 horas</strong> ·
+                        Llevas: <strong>{{ total_horas }}h</strong>
+                        {% if not cumple_minimo %}
+                            · Faltan: <strong>{{ horas_restantes }}h</strong>
+                        {% endif %}
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 2rem; font-weight: 900; line-height: 1;
+                                color: {% if cumple_minimo %}#166534{% else %}#92400e{% endif %};">
+                        {{ total_horas }}<span style="font-size: 1rem;">h</span>
+                    </div>
+                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+                                color: {% if cumple_minimo %}#166534{% else %}#92400e{% endif %};">
+                        Acumuladas
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ============================================================ #}
+        {# FORMULARIO PARA AGREGAR CURSO                                 #}
+        {# ============================================================ #}
+        <div style="background: #fafbfc; border: 2px dashed #d1d5db; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0 0 1rem; font-size: 1rem; font-weight: 700; color: #991547;">
+                <i class="fas fa-plus-circle"></i> Agregar un curso
+            </h3>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="accion" value="agregar_curso">
+
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="curso_nombre">Nombre del curso <span class="required">*</span></label>
+                        <input type="text" name="curso_nombre" id="curso_nombre"
+                               placeholder="Ej: CURSO BÁSICO DE CORRETAJE"
+                               style="text-transform: uppercase;" required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="curso_horas">Horas <span class="required">*</span></label>
+                        <input type="number" name="curso_horas" id="curso_horas"
+                               min="1" max="500" placeholder="Ej: 30" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2" style="margin-top: 1rem;">
+                    <div class="form-field">
+                        <label for="curso_institucion">Institución que lo impartió</label>
+                        <input type="text" name="curso_institucion" id="curso_institucion"
+                               placeholder="Ej: INSTITUTO DE CAPACITACIÓN INMOBILIARIA"
+                               style="text-transform: uppercase;">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="curso_fecha">Fecha del curso</label>
+                        <input type="date" name="curso_fecha" id="curso_fecha">
+                    </div>
+                </div>
+
+                <div class="form-field" style="margin-top: 1rem;">
+                    <label for="curso_documento">Diploma o constancia (PDF)</label>
+                    <input type="file" name="curso_documento" id="curso_documento" accept=".pdf">
+                    <p class="help-text">Sube el documento que acredita el curso. En formato PDF.</p>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <button type="submit" class="btn-redait">
+                        <i class="fas fa-plus"></i> Agregar curso
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {# ============================================================ #}
+        {# LISTA DE CURSOS CARGADOS                                      #}
+        {# ============================================================ #}
+        {% if cursos_cargados %}
+            <h3 style="margin: 0 0 1rem; font-size: 1rem; font-weight: 700; color: #991547;">
+                <i class="fas fa-list"></i> Cursos cargados ({{ cursos_cargados|length }})
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;">
+                {% for c in cursos_cargados %}
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.3rem; flex-wrap: wrap;">
+                                    <span style="background: #991547; color: white; padding: 0.2rem 0.7rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700;">
+                                        {{ c.horas }}h
+                                    </span>
+                                    <strong style="font-size: 0.95rem; color: #1f2937;">{{ c.nombre }}</strong>
+                                </div>
+                                <div style="font-size: 0.8rem; color: #6b7280;">
+                                    {% if c.institucion %}<i class="fas fa-school"></i> {{ c.institucion }}{% endif %}
+                                    {% if c.fecha_curso %}
+                                        {% if c.institucion %} · {% endif %}
+                                        <i class="fas fa-calendar"></i> {{ c.fecha_curso|date:"d/m/Y" }}
+                                    {% endif %}
+                                </div>
+                                {% if c.documento %}
+                                    <a href="{{ c.documento.url }}" target="_blank"
+                                       style="display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.5rem; font-size: 0.82rem; color: #991547; text-decoration: none; font-weight: 600;">
+                                        <i class="fas fa-file-pdf"></i> Ver documento
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            <form method="post" style="margin: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="accion" value="eliminar_curso">
+                                <input type="hidden" name="curso_id" value="{{ c.id }}">
+                                <button type="submit"
+                                        onclick="return confirm('¿Eliminar el curso {{ c.nombre }}?');"
+                                        style="background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="background: #f8fafc; border-radius: 12px; padding: 2rem; text-align: center; margin-bottom: 1.5rem;">
+                <i class="fas fa-graduation-cap" style="font-size: 2rem; color: #d1d5db;"></i>
+                <p style="color: #6b7280; margin: 0.5rem 0 0;">Aún no has agregado cursos.</p>
+            </div>
+        {% endif %}
+
+        {# ============================================================ #}
+        {# CARTA COMPROMISO + GUARDAR                                    #}
+        {# ============================================================ #}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="accion" value="guardar">
+
+            <div class="file-dropzone" style="margin-bottom: 1.5rem;">
+                <span class="file-label">Carta de compromiso <span class="required">*</span></span>
+                <p class="file-help">
+                    Compromiso a cumplir los Programas de Capacitación y Actualización
+                    en materia de Operaciones Inmobiliarias. En formato PDF.
+                </p>
+                <input type="file" name="carta_compromiso" accept=".pdf">
+                {% if cursos.carta_compromiso %}
+                    <span class="file-uploaded">
+                        <i class="fas fa-check-circle"></i> Archivo subido —
+                        <a href="{{ cursos.carta_compromiso.url }}" target="_blank">Ver</a>
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'usuarios:panel' %}" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn-save btn-success"
+                        {% if not cumple_minimo %}onclick="return confirm('Aún no cumples las 30 horas mínimas. ¿Deseas guardar de todas formas?');"{% endif %}>
+                    <i class="fas fa-check"></i> Finalizar registro
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    // Mayúsculas automáticas en los campos de texto
+    document.addEventListener('DOMContentLoaded', function() {
+        ['curso_nombre', 'curso_institucion'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock %}

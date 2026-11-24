@@ -1,0 +1,569 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}REDAIT - Licencias Inmobiliarias Tabasco{% endblock %}
+
+{% block content %}
+
+{# ============================================================ #}
+{# SLIDER HERO #}
+{# ============================================================ #}
+<section class="hero-slider" id="heroSlider">
+  <div class="slider-track" id="sliderTrack">
+
+    {# ----- SLIDE 1 ----- #}
+    <div class="slide" style="background-image: url('{% static "images/slider/1.png" %}');">
+      <a href="{% url 'padron:lista' %}" class="slide-btn">
+        <span>Consultar padrón</span>
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    {# ----- SLIDE 2 ----- #}
+    <div class="slide" style="background-image: url('{% static "images/slider/2.png" %}');">
+      <a href="#" class="slide-btn">
+        <span>Ver cursos</span>
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+    {# ----- SLIDE 3 ----- #}
+    <div class="slide" style="background-image: url('{% static "images/slider/3.png" %}');">
+      <a href="{% url 'usuarios:registro_ciudadano' %}" class="slide-btn">
+        <span>Registrarme</span>
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+
+  </div>
+
+  {# ----- Flechas de navegación ----- #}
+  <button class="slider-arrow slider-arrow-prev" id="sliderPrev" aria-label="Anterior">
+    <i class="fas fa-chevron-left"></i>
+  </button>
+  <button class="slider-arrow slider-arrow-next" id="sliderNext" aria-label="Siguiente">
+    <i class="fas fa-chevron-right"></i>
+  </button>
+
+  {# ----- Puntos indicadores ----- #}
+  <div class="slider-dots" id="sliderDots">
+    <button class="slider-dot activo" data-slide="0" aria-label="Slide 1"></button>
+    <button class="slider-dot" data-slide="1" aria-label="Slide 2"></button>
+    <button class="slider-dot" data-slide="2" aria-label="Slide 3"></button>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 2. TRES MODALIDADES DEL TRÁMITE -->
+<!-- ============================================================ -->
+<section id="modalidades" style="padding: 4rem 0; background-image: url('/static/images/texturas/TEXTURAS GOBIERNO_Mesa de trabajo DORADO SUPER CLARO.png'); background-size: cover; background-position: center; background-attachment: fixed; position: relative;">
+    <!-- Overlay transparente para distinguir la sección -->
+    <div style="position: absolute; inset: 0; background: rgba(255, 255, 255, 0.92); z-index: 1;"></div>
+    
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; position: relative; z-index: 2;">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <span style="display: inline-block; background: #991547; color: white; padding: 0.3rem 1.2rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Modalidades</span>
+            <h2 style="font-size: 2.8rem; font-weight: 800; color: #1f2937;">Elige la que te corresponde</h2>
+            <p style="color: #6b7280; max-width: 600px; margin: 0.5rem auto 0 auto;">Selecciona la modalidad según tu perfil</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; align-items: stretch;">
+            
+            <!-- Tarjeta 1: Persona Física -->
+            <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border-top: 4px solid #991547; transition: all 0.3s ease; display: flex; flex-direction: column; height: 100%;">
+                <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <span style="background: #991547; color: white; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700;">Persona Física</span>
+                    
+                </div>
+                <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; color: #1f2937;">Licencia para Persona Física</h3>
+                <p style="color: #6b7280; font-size: 0.95rem; margin-bottom: 1.5rem; flex-grow: 1;">Para personas que desean ejercer de manera individual la actividad inmobiliaria.</p>
+                
+                <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #e5e7eb;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Costo</span>
+                        <span style="font-weight: 700; color: #991547;">$703.86 MXN</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #e5e7eb;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Vigencia</span>
+                        <span style="font-weight: 600; color: #1f2937;">12 meses</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #e5e7eb;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Resolución</span>
+                        <span style="font-weight: 600; color: #1f2937;">Inmediato</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Capacitación</span>
+                        <span style="font-weight: 600; color: #1f2937;">30 horas mínimas</span>
+                    </div>
+                </div>
+                
+                
+                
+                <a href="{% url 'usuarios:panel' %}" style="display: block; width: 100%; text-align: center; margin-top: auto; background: #991547; color: white; padding: 0.8rem 2.5rem; border-radius: 50px; border: none; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; text-decoration: none;">
+                    <i class="fas fa-rocket"></i> Iniciar trámite
+                </a>
+            </div>
+
+            <!-- Tarjeta 2: Persona Moral -->
+            <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border-top: 4px solid #C49955; transition: all 0.3s ease; display: flex; flex-direction: column; height: 100%; position: relative;">
+                
+                <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <span style="background: #C49955; color: white; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700;">Persona Moral</span>
+                    
+                </div>
+                <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; color: #1f2937;">Licencia para Persona Moral</h3>
+                <p style="color: #6b7280; font-size: 0.95rem; margin-bottom: 1.5rem; flex-grow: 1;">Para todo tipo de sociedades que realicen actividades inmobiliarias.</p>
+                
+                <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #e5e7eb;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Costo</span>
+                        <span style="font-weight: 700; color: #991547;">$703.86 MXN</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #e5e7eb;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Vigencia</span>
+                        <span style="font-weight: 600; color: #1f2937;">12 meses</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #e5e7eb;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Resolución</span>
+                        <span style="font-weight: 600; color: #1f2937;">Inmediato</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Capacitación</span>
+                        <span style="font-weight: 600; color: #1f2937;">30 horas mínimas</span>
+                    </div>
+                </div>
+                
+                
+                
+                <a href="{% url 'usuarios:panel' %}" style="display: block; width: 100%; text-align: center; margin-top: auto; background: #991547; color: white; padding: 0.8rem 2.5rem; border-radius: 50px; border: none; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; text-decoration: none;">
+                    <i class="fas fa-rocket"></i> Iniciar trámite
+                </a>
+            </div>
+
+            <!-- Tarjeta 3: Revalidación -->
+            <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border-top: 4px solid #771139; transition: all 0.3s ease; display: flex; flex-direction: column; height: 100%;">
+                <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <span style="background: #771139; color: white; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700;">Revalidación</span>
+                    
+                </div>
+                <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; color: #1f2937;">Revalidación de Licencia</h3>
+                <p style="color: #6b7280; font-size: 0.95rem; margin-bottom: 1.5rem; flex-grow: 1;">Para quienes ya cuentan con licencia y necesitan revalidarla por 12 meses más.</p>
+                
+                <div style="background: #f8fafc; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #e5e7eb;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Costo</span>
+                        <span style="font-weight: 700; color: #991547;">$703.86 MXN</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #e5e7eb;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Vigencia</span>
+                        <span style="font-weight: 600; color: #1f2937;">12 meses</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid #e5e7eb;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Resolución</span>
+                        <span style="font-weight: 600; color: #1f2937;">Inmediato</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.3rem 0;">
+                        <span style="color: #6b7280; font-size: 0.85rem;">Capacitación</span>
+                        <span style="font-weight: 600; color: #1f2937;">30 horas mínimas</span>
+                    </div>
+                </div>
+                
+                
+                
+                <a href="{% url 'usuarios:panel' %}" style="display: block; width: 100%; text-align: center; margin-top: auto; background: #771139; color: white; padding: 0.8rem 2.5rem; border-radius: 50px; border: none; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; text-decoration: none;">
+                    <i class="fas fa-sync-alt"></i> Revalidar ahora
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 3. REQUISITOS POR MODALIDAD (TABS) - BLOQUES BLANCOS -->
+<!-- ============================================================ -->
+<!-- ============================================================ -->
+<!-- 3. REQUISITOS POR MODALIDAD (TABS) -->
+<!-- ============================================================ -->
+<section id="requisitos" style="padding: 4rem 0; background-image: url('/static/images/texturas/TEXTURAS GOBIERNO_Mesa de trabajo DORADO SUPER CLARO.png'); background-size: cover; background-position: center; background-attachment: fixed; position: relative;">
+    <div style="position: absolute; inset: 0; background: rgba(255, 255, 255, 0.92); z-index: 1;"></div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; position: relative; z-index: 2;">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <span style="display: inline-block; background: #991547; color: white; padding: 0.3rem 1.2rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Requisitos</span>
+            <h2 style="font-size: 2.8rem; font-weight: 800; color: #1f2937;">Documentación necesaria</h2>
+            <p style="color: #6b7280; max-width: 600px; margin: 0.5rem auto 0 auto;">Requisitos según la modalidad que elijas</p>
+        </div>
+
+        <!-- Tabs -->
+        <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+            <button onclick="mostrarRequisitos('fisica')" id="tabFisica"
+                    style="background: #991547; color: white; padding: 0.8rem 2rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                <i class="fas fa-user"></i> Persona Física
+            </button>
+            <button onclick="mostrarRequisitos('moral')" id="tabMoral"
+                    style="background: #e5e7eb; color: #1f2937; padding: 0.8rem 2rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                <i class="fas fa-building"></i> Persona Moral
+            </button>
+            <button onclick="mostrarRequisitos('revalidacion')" id="tabRevalidacion"
+                    style="background: #e5e7eb; color: #1f2937; padding: 0.8rem 2rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                <i class="fas fa-sync-alt"></i> Revalidación
+            </button>
+        </div>
+
+        <!-- ============ PERSONA FÍSICA ============ -->
+        <div id="requisitosFisica" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(4px); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+            <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <span style="background: #991547; color: white; padding: 0.25rem 0.9rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700;">Inscripción</span>
+                <h3 style="color: #991547; margin: 0; font-size: 1.5rem;">Persona Física</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #991547; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">a) Constancia de Situación Fiscal</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Actualizada con actividad inmobiliaria o servicios relacionados.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #991547; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">b) Constancia PROFECO</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Registro del Contrato de Adhesión de Prestación de Servicios.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #991547; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">c) Constancia de Antecedentes no Penales</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Por delitos patrimoniales.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #991547; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">d) Documento membretado de capacitación</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Acreditar mínimo 30 horas efectivas en Operaciones Inmobiliarias.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #991547; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">e) Identificación oficial vigente</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">INE, Pasaporte o Licencia de manejo con fotografía.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #991547; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">f) Comprobante de domicilio fiscal</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Domicilio fiscal matriz en el Estado o sucursales.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #991547; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">g) Carta Compromiso</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Cumplir con los Programas de Capacitación y Actualización.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #991547; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">h) Foto digital</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Con las medidas específicas del sistema.</p>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 2rem; justify-content: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #f1f5f9; flex-wrap: wrap;">
+                <div><span style="color: #6b7280; font-size: 0.9rem;">Costo:</span> <strong style="color: #991547; font-size: 1.2rem;">$703.86 MXN</strong></div>
+                <div><span style="color: #6b7280; font-size: 0.9rem;">Vigencia:</span> <strong style="color: #1f2937; font-size: 1.2rem;">1 año</strong></div>
+            </div>
+        </div>
+
+        <!-- ============ PERSONA MORAL ============ -->
+        <div id="requisitosMoral" style="display: none; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(4px); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+            <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <span style="background: #C49955; color: white; padding: 0.25rem 0.9rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700;">Inscripción</span>
+                <h3 style="color: #C49955; margin: 0; font-size: 1.5rem;">Persona Moral</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #C49955; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">a) Constancia de Situación Fiscal</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Actualizada con actividad inmobiliaria.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #C49955; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">b) Constancia PROFECO</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Registro del Contrato de Adhesión.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #C49955; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">c) Antecedentes no Penales</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Del representante legal.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #C49955; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">d) Acta Constitutiva</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Copia del documento constitutivo de la sociedad.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #C49955; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">e) Poder notarial</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Del representante legal.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #C49955; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">f) Documento de capacitación</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">30 horas mínimas del representante legal.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #C49955; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">g) Identificación oficial</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Del representante legal (INE, Pasaporte o Licencia).</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #C49955; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">h) Comprobante de domicilio fiscal</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Domicilio fiscal matriz o sucursales.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #C49955; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">i) Carta Compromiso</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Programas de Capacitación y Actualización.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #C49955; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">j) Logotipo de la empresa</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Imagen institucional de la sociedad.</p>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 2rem; justify-content: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #f1f5f9; flex-wrap: wrap;">
+                <div><span style="color: #6b7280; font-size: 0.9rem;">Costo:</span> <strong style="color: #991547; font-size: 1.2rem;">$703.86 MXN</strong></div>
+                <div><span style="color: #6b7280; font-size: 0.9rem;">Vigencia:</span> <strong style="color: #1f2937; font-size: 1.2rem;">1 año</strong></div>
+            </div>
+        </div>
+
+        <!-- ============ REVALIDACIÓN ============ -->
+        <div id="requisitosRevalidacion" style="display: none; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(4px); border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+            <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <span style="background: #771139; color: white; padding: 0.25rem 0.9rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700;">Persona física / Persona moral</span>
+                <h3 style="color: #771139; margin: 0; font-size: 1.5rem;">Revalidación de Licencia</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #771139; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">a) Constancia de Situación Fiscal</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Actualizada con actividad inmobiliaria o servicios relacionados.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #771139; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">b) Documento de capacitación</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Membretado que acredite mínimo 30 horas efectivas.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #771139; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">c) Carta Bajo Protesta</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">De Decir Verdad, proporcionada por la Secretaría.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #771139; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">d) Identificación oficial vigente</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">INE, Pasaporte o Licencia de manejo con fotografía.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #771139; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">e) Constancia de Inscripción anterior</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Copia de la Licencia de Operaciones Inmobiliarias previa.</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 12px; border-left: 4px solid #771139; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <strong style="color: #1f2937;">f) Foto digital</strong>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0.3rem 0 0 0;">Con las medidas específicas del sistema.</p>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 2rem; justify-content: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #f1f5f9; flex-wrap: wrap;">
+                <div><span style="color: #6b7280; font-size: 0.9rem;">Costo:</span> <strong style="color: #991547; font-size: 1.2rem;">$703.86 MXN</strong></div>
+                <div><span style="color: #6b7280; font-size: 0.9rem;">Vigencia:</span> <strong style="color: #1f2937; font-size: 1.2rem;">1 año</strong></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Script de tabs -->
+<script>
+function mostrarRequisitos(tipo) {
+    // Ocultar todos
+    document.getElementById('requisitosFisica').style.display = 'none';
+    document.getElementById('requisitosMoral').style.display = 'none';
+    document.getElementById('requisitosRevalidacion').style.display = 'none';
+
+    // Reset botones
+    document.getElementById('tabFisica').style.background = '#e5e7eb';
+    document.getElementById('tabFisica').style.color = '#1f2937';
+    document.getElementById('tabMoral').style.background = '#e5e7eb';
+    document.getElementById('tabMoral').style.color = '#1f2937';
+    document.getElementById('tabRevalidacion').style.background = '#e5e7eb';
+    document.getElementById('tabRevalidacion').style.color = '#1f2937';
+
+    // Activar según el tipo
+    if (tipo === 'fisica') {
+        document.getElementById('requisitosFisica').style.display = 'block';
+        document.getElementById('tabFisica').style.background = '#991547';
+        document.getElementById('tabFisica').style.color = 'white';
+    } else if (tipo === 'moral') {
+        document.getElementById('requisitosMoral').style.display = 'block';
+        document.getElementById('tabMoral').style.background = '#C49955';
+        document.getElementById('tabMoral').style.color = 'white';
+    } else if (tipo === 'revalidacion') {
+        document.getElementById('requisitosRevalidacion').style.display = 'block';
+        document.getElementById('tabRevalidacion').style.background = '#771139';
+        document.getElementById('tabRevalidacion').style.color = 'white';
+    }
+}
+</script>
+<script>
+(function() {
+  const track = document.getElementById('sliderTrack');
+  const dots = document.querySelectorAll('.slider-dot');
+  const prevBtn = document.getElementById('sliderPrev');
+  const nextBtn = document.getElementById('sliderNext');
+  if (!track || !dots.length) return;
+
+  const total = dots.length;
+  let actual = 0;
+  let autoplayTimer = null;
+  const INTERVALO = 6000; // 6 segundos
+
+  function irA(indice) {
+    actual = (indice + total) % total;
+    track.style.transform = `translateX(-${actual * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('activo', i === actual));
+  }
+
+  function siguiente() { irA(actual + 1); }
+  function anterior() { irA(actual - 1); }
+
+  function iniciarAutoplay() {
+    detenerAutoplay();
+    autoplayTimer = setInterval(siguiente, INTERVALO);
+  }
+  function detenerAutoplay() {
+    if (autoplayTimer) clearInterval(autoplayTimer);
+  }
+
+  // Flechas
+  if (nextBtn) nextBtn.addEventListener('click', () => {
+    siguiente();
+    iniciarAutoplay();
+  });
+  if (prevBtn) prevBtn.addEventListener('click', () => {
+    anterior();
+    iniciarAutoplay();
+  });
+
+  // Puntos
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      irA(i);
+      iniciarAutoplay();
+    });
+  });
+
+  // Pausar al pasar el mouse
+  const slider = document.getElementById('heroSlider');
+  if (slider) {
+    slider.addEventListener('mouseenter', detenerAutoplay);
+    slider.addEventListener('mouseleave', iniciarAutoplay);
+  }
+
+  // Swipe en móvil
+  let inicioX = 0;
+  let moviendo = false;
+  if (slider) {
+    slider.addEventListener('touchstart', (e) => {
+      inicioX = e.touches[0].clientX;
+      moviendo = true;
+      detenerAutoplay();
+    }, { passive: true });
+
+    slider.addEventListener('touchend', (e) => {
+      if (!moviendo) return;
+      const finX = e.changedTouches[0].clientX;
+      const diff = inicioX - finX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) siguiente();
+        else anterior();
+      }
+      moviendo = false;
+      iniciarAutoplay();
+    });
+  }
+
+  // Teclado
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { siguiente(); iniciarAutoplay(); }
+    if (e.key === 'ArrowLeft') { anterior(); iniciarAutoplay(); }
+  });
+
+  // Iniciar
+  irA(0);
+  iniciarAutoplay();
+})();
+</script>
+<!-- ============================================================ -->
+<!-- 4. DATOS DE CONTACTO -->
+<!-- ============================================================ -->
+<section style="padding: 4rem 0; background-image: url('/static/images/texturas/TEXTURAS GOBIERNO_Mesa de trabajo DORADO SUPER CLARO.png'); background-size: cover; background-position: center; background-attachment: fixed; position: relative;">
+    <!-- Overlay transparente para distinguir la sección -->
+    <div style="position: absolute; inset: 0; background: rgba(255, 255, 255, 0.92); z-index: 1;"></div>
+    
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; position: relative; z-index: 2;">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <span style="display: inline-block; background: #991547; color: white; padding: 0.3rem 1.2rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Contacto</span>
+            <h2 style="font-size: 2.8rem; font-weight: 800; color: #1f2937;">¿Tienes dudas?</h2>
+            <p style="color: #6b7280; max-width: 600px; margin: 0.5rem auto 0 auto;">Comunícate con la Secretaría de Turismo y Desarrollo Económico</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); text-align: center;">
+                <i class="fas fa-user-circle" style="font-size: 3rem; color: #991547;"></i>
+                <h4 style="font-weight: 700; margin: 0.5rem 0 0.3rem 0; color: #1f2937;">Mirna Magdalena Rosario Mejía</h4>
+                <p style="color: #6b7280; font-size: 0.9rem;">Jefe de Área</p>
+            </div>
+            <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); text-align: center;">
+                <i class="fas fa-phone-alt" style="font-size: 3rem; color: #C49955;"></i>
+                <h4 style="font-weight: 700; margin: 0.5rem 0 0.3rem 0; color: #1f2937;">(993) 310-9750</h4>
+                <p style="color: #6b7280; font-size: 0.9rem;">Ext. 48122</p>
+            </div>
+            <div style="background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); text-align: center;">
+                <i class="fas fa-envelope" style="font-size: 3rem; color: #771139;"></i>
+                <h4 style="font-weight: 700; margin: 0.5rem 0 0.3rem 0; color: #1f2937;">mirnarosario@tabasco.gob.mx</h4>
+                <p style="color: #6b7280; font-size: 0.9rem;">Correo electrónico</p>
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: 16px; padding: 2rem; margin-top: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.06); text-align: center;">
+            <i class="fas fa-map-marker-alt" style="color: #991547; font-size: 1.5rem;"></i>
+            <p style="margin: 0.5rem 0 0 0; color: #4a5568;">
+                Prolongación Paseo Tabasco, Villahermosa, Galaxia/Tabasco 2000, 1504, C.P. 86035
+            </p>
+            <p style="color: #6b7280; font-size: 0.85rem; margin-top: 0.5rem;">
+                <strong>Horario:</strong> Lunes a Viernes de 8:30 a 15:00 hrs
+            </p>
+        </div>
+    </div>
+</section>
+
+
+<section style="background-image: url('/static/images/texturas/rextangulo rojo.png'); background-size: cover; background-position: center; background-attachment: fixed; padding: 4rem 0; position: relative; border-radius: 50px 50px 0 0;">
+    
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; text-align: center; color: white; position: relative; z-index: 1;">
+        <h2 style="font-size: 2.8rem; font-weight: 800; margin-bottom: 0.5rem; text-shadow: 0 2px 15px rgba(0,0,0,0.5);">
+            ¿Listo para iniciar tu trámite?
+        </h2>
+        <p style="color: rgba(255,255,255,0.95); font-size: 1.2rem; margin-bottom: 2rem; text-shadow: 0 2px 10px rgba(0,0,0,0.4);">
+            Obtén o revalida tu licencia de operaciones inmobiliarias en Tabasco
+        </p>
+        <a href="#" style="display: inline-block; background: linear-gradient(90deg, #DDC9A3 0%, #C49955 100%); color: #4a0a22; padding: 1rem 3rem; border-radius: 50px; font-weight: 700; font-size: 1.2rem; text-decoration: none; transition: 0.3s; box-shadow: 0 8px 30px rgba(0,0,0,0.3);">
+            <i class="fas fa-rocket"></i> Comenzar ahora
+        </a>
+    </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SCRIPT PARA TABS DE REQUISITOS -->
+<!-- ============================================================ -->
+<script>
+function mostrarRequisitos(tipo) {
+    document.getElementById('requisitosFisica').style.display = 'none';
+    document.getElementById('requisitosMoral').style.display = 'none';
+    document.getElementById('requisitosRevalidacion').style.display = 'none';
+    
+    document.getElementById('tabFisica').style.background = '#e5e7eb';
+    document.getElementById('tabFisica').style.color = '#1f2937';
+    document.getElementById('tabMoral').style.background = '#e5e7eb';
+    document.getElementById('tabMoral').style.color = '#1f2937';
+    document.getElementById('tabRevalidacion').style.background = '#e5e7eb';
+    document.getElementById('tabRevalidacion').style.color = '#1f2937';
+    
+    if (tipo === 'fisica') {
+        document.getElementById('requisitosFisica').style.display = 'block';
+        document.getElementById('tabFisica').style.background = '#991547';
+        document.getElementById('tabFisica').style.color = 'white';
+    } else if (tipo === 'moral') {
+        document.getElementById('requisitosMoral').style.display = 'block';
+        document.getElementById('tabMoral').style.background = '#C49955';
+        document.getElementById('tabMoral').style.color = 'white';
+    } else if (tipo === 'revalidacion') {
+        document.getElementById('requisitosRevalidacion').style.display = 'block';
+        document.getElementById('tabRevalidacion').style.background = '#771139';
+        document.getElementById('tabRevalidacion').style.color = 'white';
+    }
+}
+</script>
+
+{% endblock %}

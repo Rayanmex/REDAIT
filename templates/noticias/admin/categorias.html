@@ -1,0 +1,130 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Categorías - Admin REDAIT{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem;">
+
+  <div style="margin-bottom: 2rem;">
+    <a href="{% url 'noticias:admin_lista' %}"
+       style="color: #991547; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
+      <i class="fas fa-arrow-left"></i> Volver a noticias
+    </a>
+    <h1 style="font-size: 1.8rem; font-weight: 800; color: #1f2937; margin: 0.8rem 0 0;">
+      <i class="fas fa-tags" style="color: #991547;"></i> Categorías
+    </h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+
+    <!-- Formulario para nueva categoría -->
+    <div style="background: white; border-radius: 14px; padding: 1.5rem;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.05);">
+      <h3 style="font-size: 1rem; font-weight: 800; color: #1f2937;
+                 margin: 0 0 1rem; padding-bottom: 0.6rem; border-bottom: 2px solid #f1f5f9;">
+        Nueva categoría
+      </h3>
+      <form method="post">
+        {% csrf_token %}
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 700;
+                        color: #6b7280; margin-bottom: 0.3rem;">Nombre</label>
+          {{ form.nombre }}
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 700;
+                        color: #6b7280; margin-bottom: 0.3rem;">Color</label>
+          {{ form.color }}
+        </div>
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 700;
+                        color: #6b7280; margin-bottom: 0.3rem;">Orden</label>
+          {{ form.orden }}
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem;
+                        font-size: 0.85rem; color: #4b5563; cursor: pointer;">
+            {{ form.activa }}
+            <span>Activa</span>
+          </label>
+        </div>
+        <button type="submit"
+                style="width: 100%; background: #991547; color: white;
+                       padding: 0.7rem; border-radius: 50px; border: none;
+                       font-weight: 700; cursor: pointer;">
+          <i class="fas fa-plus"></i> Crear categoría
+        </button>
+      </form>
+    </div>
+
+    <!-- Lista -->
+    <div style="background: white; border-radius: 14px; overflow: hidden;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.05);">
+      <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+        <h3 style="font-size: 1rem; font-weight: 800; color: #1f2937; margin: 0;">
+          {{ categorias.count }} categoría{{ categorias.count|pluralize }}
+        </h3>
+      </div>
+
+      {% if categorias %}
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background: #f8fafc;">
+              <th style="padding: 0.8rem 1rem; text-align: left; font-size: 0.8rem;
+                         color: #6b7280; font-weight: 700;">Categoría</th>
+              <th style="padding: 0.8rem 1rem; text-align: center; font-size: 0.8rem;
+                         color: #6b7280; font-weight: 700;">Noticias</th>
+              <th style="padding: 0.8rem 1rem; text-align: center; font-size: 0.8rem;
+                         color: #6b7280; font-weight: 700;">Estado</th>
+              <th style="padding: 0.8rem 1rem; text-align: right; font-size: 0.8rem;
+                         color: #6b7280; font-weight: 700;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cat in categorias %}
+              <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 0.9rem 1rem;">
+                  <span style="display: inline-block; background: {{ cat.color }}20;
+                               color: {{ cat.color }}; padding: 0.25rem 0.8rem;
+                               border-radius: 50px; font-size: 0.78rem; font-weight: 700;">
+                    {{ cat.nombre }}
+                  </span>
+                </td>
+                <td style="padding: 0.9rem 1rem; text-align: center; color: #6b7280;">
+                  {{ cat.noticias.count }}
+                </td>
+                <td style="padding: 0.9rem 1rem; text-align: center;">
+                  {% if cat.activa %}
+                    <span style="color: #166534; font-weight: 700; font-size: 0.8rem;">● Activa</span>
+                  {% else %}
+                    <span style="color: #991b1b; font-weight: 700; font-size: 0.8rem;">● Inactiva</span>
+                  {% endif %}
+                </td>
+                <td style="padding: 0.9rem 1rem; text-align: right;">
+                  <form method="post"
+                        action="{% url 'noticias:admin_categoria_eliminar' cat.id %}"
+                        style="display: inline;"
+                        onsubmit="return confirm('¿Eliminar la categoría «{{ cat.nombre }}»? Las noticias asociadas quedarán sin categoría.');">
+                    {% csrf_token %}
+                    <button type="submit"
+                            style="background: none; border: none; color: #dc2626;
+                                   cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                      <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p style="text-align: center; padding: 2rem; color: #9ca3af;">
+          No hay categorías. Crea la primera.
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

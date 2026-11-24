@@ -1,0 +1,81 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ noticia.titulo }} - Noticias REDAIT{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem;">
+
+  <a href="{% url 'noticias:lista' %}"
+     style="display: inline-flex; align-items: center; gap: 0.4rem;
+            color: #991547; text-decoration: none; font-weight: 600;
+            font-size: 0.9rem; margin-bottom: 1.5rem;">
+    <i class="fas fa-arrow-left"></i> Volver a noticias
+  </a>
+
+  <article>
+    {% if noticia.categoria %}
+      <span style="display: inline-block; background: {{ noticia.categoria.color }}20;
+                   color: {{ noticia.categoria.color }}; padding: 0.3rem 1rem;
+                   border-radius: 50px; font-size: 0.75rem; font-weight: 700;
+                   text-transform: uppercase; letter-spacing: 0.05em;
+                   margin-bottom: 1rem;">
+        {{ noticia.categoria.nombre }}
+      </span>
+    {% endif %}
+
+    <h1 style="font-size: 2.4rem; font-weight: 900; color: #1f2937;
+               margin: 0 0 1rem; line-height: 1.15;">
+      {{ noticia.titulo }}
+    </h1>
+
+    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;
+                padding-bottom: 1.5rem; margin-bottom: 1.5rem;
+                border-bottom: 1px solid #e5e7eb;
+                color: #6b7280; font-size: 0.85rem;">
+      <span><i class="far fa-calendar"></i> {{ noticia.fecha_publicacion|date:"d \d\e F \d\e Y" }}</span>
+      {% if noticia.autor %}
+        <span><i class="fas fa-user"></i> {{ noticia.autor.get_full_name|default:noticia.autor.username }}</span>
+      {% endif %}
+      <span><i class="far fa-eye"></i> {{ noticia.vistas }} vistas</span>
+    </div>
+
+    {% if noticia.imagen_portada %}
+      <div style="border-radius: 14px; overflow: hidden; margin-bottom: 2rem;">
+        <img src="{{ noticia.imagen_portada.url }}"
+             alt="{{ noticia.imagen_alt|default:noticia.titulo }}"
+             style="width: 100%; height: auto; display: block;">
+      </div>
+    {% endif %}
+
+    <div style="font-size: 1.05rem; line-height: 1.7; color: #374151;">
+      {{ noticia.contenido|safe }}
+    </div>
+  </article>
+
+  {% if relacionadas %}
+    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid #f1f5f9;">
+      <h3 style="font-size: 1.3rem; font-weight: 800; color: #1f2937; margin-bottom: 1.2rem;">
+        Noticias relacionadas
+      </h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+        {% for r in relacionadas %}
+          <a href="{% url 'noticias:detalle' r.slug %}"
+             style="background: white; border-radius: 12px; padding: 1rem;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-decoration: none;
+                    border-left: 4px solid #991547;">
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: #1f2937;
+                       margin: 0 0 0.4rem; line-height: 1.3;">
+              {{ r.titulo|truncatechars:70 }}
+            </h4>
+            <span style="font-size: 0.75rem; color: #9ca3af;">
+              {{ r.fecha_publicacion|date:"d M Y" }}
+            </span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

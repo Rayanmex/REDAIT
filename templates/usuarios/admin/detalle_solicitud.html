@@ -1,0 +1,608 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ solicitud.ciudadano.nombre_completo }} - REDAIT{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin_panel.css' %}">
+<style>
+  .comentario-textarea {
+    width: 100%;
+    min-height: 130px;
+    padding: 0.9rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    resize: vertical;
+    transition: 0.2s ease;
+    background: #fafafa;
+    color: #1f2937;
+  }
+  .comentario-textarea:focus {
+    outline: none;
+    border-color: #991547;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(153,21,71,0.08);
+  }
+  .comentario-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 0.5rem;
+  }
+  .comentario-hint {
+    display: block;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 0.4rem;
+  }
+  .acciones-admin button {
+    width: 100%;
+    justify-content: center;
+  }
+  .estado-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .estado-pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .estado-pill.borrador { background: #f1f5f9; color: #475569; }
+  .estado-pill.en_revision { background: #dbeafe; color: #1e40af; }
+  .estado-pill.aprobada { background: #dcfce7; color: #166534; }
+  .estado-pill.requiere_accion { background: #fef3c7; color: #92400e; }
+  .estado-pill.rechazada { background: #fee2e2; color: #991b1b; }
+  .estado-pill.licencia_emitida { background: #bbf7d0; color: #14532d; }
+
+  .folio-agente-grande {
+    background: linear-gradient(135deg, #991547 0%, #4a0a22 100%);
+    color: white;
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(153,21,71,0.3);
+  }
+  .folio-agente-grande span.numero {
+    font-family: monospace;
+    font-size: 1.1rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrapper">
+
+  <div class="admin-header">
+    <div>
+      <h1>{{ solicitud.ciudadano.nombre_completo }}</h1>
+      <p>
+        {{ solicitud.get_tipo_tramite_display }}
+        {% if solicitud.es_persona_moral %}
+          <span style="background:#C49955; color:white; padding:0.15rem 0.6rem; border-radius:20px; font-size:0.7rem; font-weight:700; margin-left:0.4rem;">PERSONA MORAL</span>
+        {% else %}
+          <span style="background:#991547; color:white; padding:0.15rem 0.6rem; border-radius:20px; font-size:0.7rem; font-weight:700; margin-left:0.4rem;">PERSONA FÍSICA</span>
+        {% endif %}
+        {% if not solicitud.ciudadano.activo %}
+          <span style="background:#fee2e2; color:#991b1b; padding:0.15rem 0.6rem; border-radius:20px; font-size:0.7rem; font-weight:700; margin-left:0.4rem;"
+                title="{{ solicitud.ciudadano.motivo_desactivacion|default:'Desactivado' }}">
+            🚫 DESACTIVADO
+          </span>
+        {% endif %}
+      </p>
+      <p style="font-size: 0.8rem; color: #6b7280; margin-top: 0.3rem;">
+        Trámite: <strong style="font-family: monospace; color: #991547;">{{ solicitud.folio }}</strong>
+      </p>
+    </div>
+    <div class="admin-header-actions">
+      <span class="estado-pill {{ solicitud.estado }}">
+        {{ solicitud.estado_display_completo }}
+      </span>
+
+      {% if solicitud.ciudadano.folio_licencia %}
+        <span class="folio-agente-grande">
+          <i class="fas fa-id-card"></i>
+          Folio agente: <span class="numero">{{ solicitud.ciudadano.folio_licencia }}</span>
+        </span>
+      {% endif %}
+
+      {% if solicitud.estado == 'aprobada' %}
+        <a href="{% url 'usuarios:admin_descargar_pase_caja' solicitud.id %}" class="btn-redait">
+          <i class="fas fa-file-word"></i> Pase de caja
+        </a>
+      {% endif %}
+
+      {% if solicitud.estado == 'licencia_emitida' %}
+        <a href="{% url 'usuarios:admin_descargar_licencia' solicitud.id %}" class="btn-redait"
+           style="background: linear-gradient(135deg, #22c55e 0%, #166534 100%);">
+          <i class="fas fa-award"></i> Descargar licencia
+        </a>
+      {% endif %}
+
+      <a href="{% url 'usuarios:admin_editar_solicitud' solicitud.id %}" class="btn-redait">
+          <i class="fas fa-edit"></i> Editar
+      </a>
+
+      <a href="{% url 'usuarios:admin_lista_solicitudes' %}" class="btn-redait-outline">
+        <i class="fas fa-arrow-left"></i> Volver
+      </a>
+    </div>
+  </div>
+
+  {% if not solicitud.ciudadano.activo %}
+    <div style="background: #fef2f2; border-left: 4px solid #991b1b;
+                padding: 1rem 1.2rem; margin-bottom: 1.2rem; border-radius: 8px;">
+      <p style="margin: 0; color: #991b1b; font-size: 0.9rem;">
+        <strong>🚫 Ciudadano desactivado</strong>
+        {% if solicitud.ciudadano.fecha_desactivacion %}
+          · {{ solicitud.ciudadano.fecha_desactivacion|date:"d/m/Y H:i" }}
+        {% endif %}
+        {% if solicitud.ciudadano.motivo_desactivacion %}
+          <br><strong>Motivo:</strong> {{ solicitud.ciudadano.motivo_desactivacion }}
+        {% endif %}
+      </p>
+    </div>
+  {% endif %}
+
+  <div class="detalle-grid">
+
+    <!-- COLUMNA IZQUIERDA -->
+    <div>
+
+      {# ===== DATOS PERSONALES ===== #}
+      <div class="detalle-card">
+        <h3><i class="fas fa-user"></i> Datos personales</h3>
+        <dl class="detalle-dl">
+          <dt>Nombre</dt>
+          <dd>{{ solicitud.ciudadano.nombre_completo|default:"—" }}</dd>
+
+          <dt>Empresa</dt>
+          <dd>
+            {% if solicitud.ciudadano.empresa %}
+              <strong style="color: #991547;">{{ solicitud.ciudadano.empresa.nombre }}</strong>
+            {% else %}
+              — (persona independiente)
+            {% endif %}
+          </dd>
+
+          <dt>Email</dt>
+          <dd>{{ solicitud.ciudadano.user.email }}</dd>
+
+          <dt>Teléfono</dt>
+          <dd>
+            <strong style="color: #991547; font-family: monospace; font-size: 0.95rem;">
+              {{ solicitud.ciudadano.telefono|default:"—" }}
+            </strong>
+          </dd>
+
+          {% if datos_personales %}
+            <dt>RFC</dt><dd>{{ datos_personales.rfc|default:"—" }}</dd>
+            <dt>CURP</dt><dd>{{ datos_personales.curp|default:"—" }}</dd>
+            <dt>Régimen fiscal</dt><dd>{{ datos_personales.get_regimen_fiscal_display }}</dd>
+            <dt>Sexo</dt><dd>{{ datos_personales.get_sexo_display }}</dd>
+          {% endif %}
+        </dl>
+      </div>
+
+      {# ===== DOMICILIO E IDENTIFICACIÓN ===== #}
+      <div class="detalle-card">
+        <h3><i class="fas fa-home"></i> Domicilio e identificación</h3>
+        {% if domicilio %}
+          <dl class="detalle-dl">
+            <dt>Municipio</dt><dd>{{ domicilio.municipio|default:"—" }}</dd>
+            <dt>Dirección</dt><dd>{{ domicilio.calle_numero_colonia_cp|default:"—" }}</dd>
+          </dl>
+          <div style="margin-top: 1rem;">
+            {% if domicilio.comprobante_domicilio %}
+              <a href="{{ domicilio.comprobante_domicilio.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-file-pdf icono"></i> Comprobante de domicilio</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+            {% if domicilio.identificacion_oficial %}
+              <a href="{{ domicilio.identificacion_oficial.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-id-card icono"></i> Identificación oficial</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+            {% if domicilio.foto_agente %}
+              <a href="{{ domicilio.foto_agente.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-camera icono"></i> Foto del agente</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+          </div>
+        {% else %}
+          <p class="text-muted">Sin información.</p>
+        {% endif %}
+      </div>
+
+      {# ===== DOCUMENTOS DEL NEGOCIO ===== #}
+      <div class="detalle-card">
+        <h3><i class="fas fa-briefcase"></i> Documentos del negocio</h3>
+        {% if documentos %}
+          <div>
+            {% if documentos.constancia_situacion_fiscal %}
+              <a href="{{ documentos.constancia_situacion_fiscal.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-file-invoice icono"></i> Constancia de situación fiscal</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+            {% if documentos.constancia_profeco %}
+              <a href="{{ documentos.constancia_profeco.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-file-contract icono"></i> Constancia PROFECO</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+            {% if documentos.carta_no_antecedentes %}
+              <a href="{{ documentos.carta_no_antecedentes.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-file-shield icono"></i> Carta de no antecedentes penales</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+            {% if documentos.carta_bajo_protesta %}
+              <a href="{{ documentos.carta_bajo_protesta.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-file-signature icono"></i> Carta bajo protesta</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+            {% if documentos.acta_constitutiva %}
+              <a href="{{ documentos.acta_constitutiva.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-file-contract icono"></i> Acta constitutiva</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+            {% if documentos.poder_notarial %}
+              <a href="{{ documentos.poder_notarial.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-gavel icono"></i> Poder notarial</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+            {% if documentos.logotipo_empresa %}
+              <a href="{{ documentos.logotipo_empresa.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-image icono"></i> Logotipo de la empresa</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+            {% if documentos.constancia_inscripcion_anterior %}
+              <a href="{{ documentos.constancia_inscripcion_anterior.url }}" target="_blank" class="doc-link">
+                <span class="nombre"><i class="fas fa-file-alt icono"></i> Constancia de inscripción anterior</span>
+                <i class="fas fa-download"></i>
+              </a>
+            {% endif %}
+          </div>
+        {% else %}
+          <p class="text-muted">Sin información.</p>
+        {% endif %}
+      </div>
+
+      {# ===== CURSOS Y CAPACITACIONES ===== #}
+      <div class="detalle-card">
+        <h3>
+          <i class="fas fa-graduation-cap"></i> Cursos y capacitaciones
+          {% if solicitud.cursos_cargados.exists %}
+            <span style="margin-left: auto; background: {% if solicitud.cumple_minimo_horas %}#dcfce7{% else %}#fef3c7{% endif %};
+                         color: {% if solicitud.cumple_minimo_horas %}#166534{% else %}#92400e{% endif %};
+                         padding: 0.3rem 0.9rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700;">
+              {{ solicitud.total_horas_curso }}h / 30h mín.
+            </span>
+          {% endif %}
+        </h3>
+
+        {% if solicitud.cursos_cargados.exists %}
+          <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem;">
+            {% for c in solicitud.cursos_cargados.all %}
+              <div style="background: #fafbfc; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.7rem 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 0.8rem; flex-wrap: wrap;">
+                  <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+                      <span style="background: #991547; color: white; padding: 0.15rem 0.6rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700;">
+                        {{ c.horas }}h
+                      </span>
+                      <strong style="font-size: 0.9rem;">{{ c.nombre }}</strong>
+                    </div>
+                    <div style="font-size: 0.78rem; color: #6b7280;">
+                      {% if c.institucion %}{{ c.institucion }}{% endif %}
+                      {% if c.fecha_curso %}{% if c.institucion %} · {% endif %}{{ c.fecha_curso|date:"d/m/Y" }}{% endif %}
+                    </div>
+                  </div>
+                  {% if c.documento %}
+                    <a href="{{ c.documento.url }}" target="_blank"
+                       style="color: #991547; font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap;">
+                      <i class="fas fa-file-pdf"></i> Ver PDF
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-muted" style="margin-bottom: 1rem;">Sin cursos cargados.</p>
+        {% endif %}
+
+        {% if cursos.carta_compromiso %}
+          <a href="{{ cursos.carta_compromiso.url }}" target="_blank" class="doc-link">
+            <span class="nombre"><i class="fas fa-file-signature icono"></i> Carta de compromiso</span>
+            <i class="fas fa-download"></i>
+          </a>
+        {% endif %}
+      </div>
+
+      {# ===== COMPROBANTE DE PAGO (si existe) ===== #}
+      {% if solicitud.comprobante_pago %}
+      <div class="detalle-card" style="border: 2px solid #93c5fd; background: #eff6ff;">
+        <h3><i class="fas fa-file-invoice-dollar"></i> Comprobante de pago</h3>
+        <dl class="detalle-dl">
+          <dt>Referencia</dt><dd>{{ solicitud.referencia_pago|default:"—" }}</dd>
+          <dt>Monto</dt><dd>${{ solicitud.monto_pago|default:"—" }}</dd>
+          <dt>Subido</dt><dd>{{ solicitud.fecha_comprobante|date:"d/m/Y H:i"|default:"—" }}</dd>
+          <dt>Estado</dt>
+          <dd>
+            <span style="font-weight:700;">
+              {{ solicitud.get_pago_estado_display }}
+            </span>
+          </dd>
+        </dl>
+        <div style="margin-top: 1rem;">
+          <a href="{{ solicitud.comprobante_pago.url }}" target="_blank" class="doc-link">
+            <span class="nombre"><i class="fas fa-file-pdf icono"></i> Ver comprobante de pago</span>
+            <i class="fas fa-external-link-alt"></i>
+          </a>
+        </div>
+        {% if solicitud.comentario_comprobante %}
+          <div style="background: #fef2f2; border-left: 4px solid #991b1b; padding: 0.8rem 1rem; border-radius: 6px; margin-top: 1rem;">
+            <p style="margin: 0; font-size: 0.85rem; color: #991b1b;">
+              <strong>Comentario:</strong> {{ solicitud.comentario_comprobante }}
+            </p>
+          </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {# ===== LICENCIA EMITIDA ===== #}
+      {% if solicitud.estado == 'licencia_emitida' %}
+      <div class="detalle-card" style="border: 2px solid #22c55e; background: #f0fdf4;">
+        <h3 style="color: #166534;"><i class="fas fa-award"></i> Licencia emitida</h3>
+
+        <div style="background: white; border: 2px solid #22c55e; border-radius: 12px;
+                    padding: 1rem; margin-bottom: 1rem; text-align: center;">
+          <div style="font-size: 0.75rem; color: #166534; text-transform: uppercase;
+                      font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.3rem;">
+            Folio del agente
+          </div>
+          <div style="font-size: 2rem; font-weight: 900; color: #166534;
+                      font-family: monospace; letter-spacing: 0.05em;">
+            {{ solicitud.ciudadano.folio_licencia|default:"—" }}
+          </div>
+        </div>
+
+        <dl class="detalle-dl">
+          <dt>Folio del trámite</dt>
+          <dd style="font-family: monospace;">{{ solicitud.folio }}</dd>
+
+          <dt>Emitida</dt>
+          <dd>{{ solicitud.fecha_emision_licencia|date:"d/m/Y H:i"|default:"—" }}</dd>
+
+          <dt>Válida hasta</dt>
+          <dd>{{ solicitud.fecha_vigencia_padron|date:"d/m/Y"|default:"—" }}</dd>
+
+          <dt>Validó</dt>
+          <dd>
+            {% if solicitud.validador_pago %}
+              {{ solicitud.validador_pago.get_full_name|default:solicitud.validador_pago.email }}
+            {% else %}—{% endif %}
+          </dd>
+        </dl>
+      </div>
+      {% endif %}
+
+      {# ===== HISTORIAL ===== #}
+      <div class="detalle-card">
+        <h3><i class="fas fa-history"></i> Historial de estados</h3>
+        {% if historial %}
+          {% for h in historial %}
+            <div class="historial-item">
+              <div class="historial-icon">
+                <i class="fas fa-circle-check"></i>
+              </div>
+              <div class="historial-body">
+                <div class="titulo">
+                  {{ h.get_estado_anterior_display|default:"—" }} → {{ h.get_estado_nuevo_display }}
+                </div>
+                <div class="meta">
+                  {{ h.fecha|date:"d/m/Y H:i" }}
+                  {% if h.usuario %} · {{ h.usuario.email }}{% endif %}
+                </div>
+                {% if h.comentario %}
+                  <div class="comentario">{{ h.comentario }}</div>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted">Sin movimientos registrados.</p>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <!-- COLUMNA DERECHA: ACCIONES -->
+    <div>
+      <div class="detalle-card" style="position: sticky; top: 100px;">
+
+        {% if solicitud.estado == 'en_revision' %}
+          <h3><i class="fas fa-gavel"></i> Revisión de documentos</h3>
+
+          <form method="post">
+            {% csrf_token %}
+
+            <label for="comentario" class="comentario-label">Comentario del revisor</label>
+            <textarea id="comentario" name="comentario" class="comentario-textarea"
+              placeholder="Escribe aquí el motivo del rechazo, la corrección solicitada, o un comentario para el ciudadano..."></textarea>
+            <span class="comentario-hint">
+              Obligatorio para <strong>rechazar</strong> o <strong>solicitar correcciones</strong>.
+            </span>
+
+            <div class="acciones-admin" style="margin-top: 1.2rem;">
+              <button type="submit" name="accion" value="aprobar" class="btn-aprobar"
+                      onclick="return confirm('¿Aprobar la solicitud {{ solicitud.folio }}?');">
+                <i class="fas fa-check"></i> Aprobar solicitud
+              </button>
+              <button type="submit" name="accion" value="correcciones" class="btn-comentar"
+                      style="background: #f59e0b; color: #fff;"
+                      onclick="return confirm('¿Solicitar correcciones al ciudadano?');">
+                <i class="fas fa-exclamation-triangle"></i> Solicitar correcciones
+              </button>
+              <button type="submit" name="accion" value="rechazar" class="btn-rechazar"
+                      onclick="return confirm('¿Rechazar la solicitud {{ solicitud.folio }}?');">
+                <i class="fas fa-times"></i> Rechazar solicitud
+              </button>
+              <button type="submit" name="accion" value="comentar" class="btn-comentar">
+                <i class="fas fa-comment"></i> Agregar comentario
+              </button>
+            </div>
+          </form>
+
+        {% elif solicitud.estado == 'aprobada' and solicitud.pago_estado == 'comprobante_cargado' %}
+          <h3><i class="fas fa-money-check-alt"></i> Validar pago</h3>
+
+          <div style="background: #eff6ff; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+            <p style="margin: 0 0 0.5rem; font-size: 0.85rem; color: #1e40af;">
+              <strong>Referencia:</strong> {{ solicitud.referencia_pago|default:"—" }}<br>
+              <strong>Monto:</strong> ${{ solicitud.monto_pago|default:"—" }}<br>
+              <strong>Subido:</strong> {{ solicitud.fecha_comprobante|date:"d/m/Y H:i"|default:"—" }}
+            </p>
+            {% if solicitud.comprobante_pago %}
+              <a href="{{ solicitud.comprobante_pago.url }}" target="_blank"
+                 style="color: #991547; font-weight: 600; font-size: 0.9rem; text-decoration: underline;">
+                <i class="fas fa-external-link-alt"></i> Ver comprobante
+              </a>
+            {% endif %}
+          </div>
+
+          <form method="post">
+            {% csrf_token %}
+
+            <label for="comentario" class="comentario-label">Comentario (obligatorio al rechazar)</label>
+            <textarea id="comentario" name="comentario" class="comentario-textarea"
+              placeholder="Escribe aquí el motivo del rechazo del comprobante, si aplica..."></textarea>
+
+            <div class="acciones-admin" style="margin-top: 1.2rem;">
+              <button type="submit" name="accion" value="validar_pago" class="btn-aprobar"
+                      onclick="return confirm('¿Validar pago y emitir licencia?');">
+                <i class="fas fa-check"></i> Validar pago y emitir licencia
+              </button>
+              <button type="submit" name="accion" value="rechazar_pago" class="btn-rechazar"
+                      onclick="return confirm('¿Rechazar el comprobante?');">
+                <i class="fas fa-times"></i> Rechazar comprobante
+              </button>
+              <button type="submit" name="accion" value="comentar" class="btn-comentar">
+                <i class="fas fa-comment"></i> Solo agregar comentario
+              </button>
+            </div>
+          </form>
+
+        {% elif solicitud.estado == 'aprobada' and solicitud.pago_estado == 'sin_comprobante' %}
+          <h3><i class="fas fa-clock" style="color: #166534;"></i> Aprobada · Esperando pago</h3>
+
+          <div style="background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+            <p style="margin: 0; font-size: 0.9rem; color: #166534;">
+              La solicitud fue aprobada. El ciudadano puede descargar su pase de caja y subir su comprobante de pago.
+            </p>
+          </div>
+
+          <form method="post">
+            {% csrf_token %}
+            <label for="comentario" class="comentario-label">Comentario adicional</label>
+            <textarea id="comentario" name="comentario" class="comentario-textarea"
+              placeholder="Comentario opcional para el ciudadano..."></textarea>
+
+            <div class="acciones-admin" style="margin-top: 1.2rem;">
+              <button type="submit" name="accion" value="comentar" class="btn-comentar">
+                <i class="fas fa-comment"></i> Agregar comentario
+              </button>
+            </div>
+          </form>
+
+        {% elif solicitud.estado == 'requiere_accion' %}
+          <h3><i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Requiere acción del ciudadano</h3>
+
+          <div style="background: #fff7ed; border: 2px solid #f59e0b; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+            <p style="margin: 0; font-size: 0.9rem; color: #b45309;">
+              <strong>Motivo:</strong> {{ solicitud.get_motivo_accion_display }}<br>
+              {% if solicitud.motivo_accion == 'corregir_documentos' %}
+                <strong>Comentario:</strong> {{ solicitud.comentario_admin|default:"—" }}
+              {% elif solicitud.motivo_accion == 'resubir_comprobante' %}
+                <strong>Comentario:</strong> {{ solicitud.comentario_comprobante|default:"—" }}
+              {% endif %}
+            </p>
+          </div>
+
+          <form method="post">
+            {% csrf_token %}
+            <label for="comentario" class="comentario-label">Comentario adicional</label>
+            <textarea id="comentario" name="comentario" class="comentario-textarea"
+              placeholder="Comentario opcional para el ciudadano..."></textarea>
+
+            <div class="acciones-admin" style="margin-top: 1.2rem;">
+              <button type="submit" name="accion" value="comentar" class="btn-comentar">
+                <i class="fas fa-comment"></i> Agregar comentario
+              </button>
+            </div>
+          </form>
+
+        {% elif solicitud.estado == 'licencia_emitida' %}
+          <h3><i class="fas fa-award" style="color: #166534;"></i> Licencia emitida</h3>
+
+          <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+            <p style="margin: 0; font-size: 0.9rem; color: #166534;">
+              <strong>Folio agente:</strong> {{ solicitud.ciudadano.folio_licencia|default:"—" }}<br>
+              <strong>Emitida:</strong> {{ solicitud.fecha_emision_licencia|date:"d/m/Y H:i"|default:"—" }}<br>
+              <strong>Válida hasta:</strong> {{ solicitud.fecha_vigencia_padron|date:"d/m/Y"|default:"—" }}
+            </p>
+          </div>
+
+          <div class="acciones-admin">
+            <a href="{% url 'usuarios:admin_descargar_licencia' solicitud.id %}"
+               class="btn-aprobar" style="text-decoration: none;" target="_blank">
+              <i class="fas fa-download"></i> Descargar licencia
+            </a>
+          </div>
+
+        {% elif solicitud.estado == 'rechazada' %}
+          <h3><i class="fas fa-times-circle" style="color: #991b1b;"></i> Solicitud rechazada</h3>
+          <p style="font-size: 0.9rem; color: #6b7280;">
+            Esta solicitud fue rechazada definitivamente. No hay acciones disponibles.
+          </p>
+
+        {% else %}
+          <h3><i class="fas fa-info-circle"></i> Sin acciones</h3>
+          <p style="font-size: 0.9rem; color: #6b7280;">
+            Esta solicitud está en estado <strong>{{ solicitud.get_estado_display }}</strong>.
+          </p>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
